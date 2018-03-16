@@ -1,34 +1,19 @@
-# template-for-proposals
+Intl.NumberFormat Unified API Proposal
+======================================
 
-A repository template for ECMAScript proposals.
+## Motivation
 
-## Before creating a proposal
+There are many requests for adding number-formatting-related features to ECMA 402.  A few of them include:
 
-Please ensure the following:
-  1. You are a member of TC39
-  1. You have read the [process document](https://tc39.github.io/process-document/)
-  1. You have reviewed the [existing proposals](https://github.com/tc39/proposals/)
+- tc39/ecma402#200
+- tc39/ecma402#186
+- tc39/ecma402#164
+- tc39/ecma402#163
+- tc39/ecma402#95
+- tc39/ecma402#91
+- tc39/ecma402#37
+- tc39/ecma402#32
 
-## Create your proposal repo
+Rather than complicate `Intl` with more subclasses with heavilly overlapping functionality, this proposal is to restructure the spec of `Intl.NumberFormat` to make it more easilly support additional features in a "unified" way.
 
-Follow these steps:
-  1. Fork this repo, or create your own repo, clone this one, and point it at yours
-  1. Go to your repo settings “Options” page, under “GitHub Pages”, and set the source to the **master branch** and click Save.
-    1. Ensure "Issues" is checked.
-    1. Also, you probably want to disable "Wiki" and "Projects"
-  1. Avoid merge conflicts with build process output files by running:
-```sh
-git config --local --add merge.output.driver true
-git config --local --add merge.output.driver true
-```
-  1. Add a post-rewrite git hook to auto-rebuild the output on every commit:
-```sh
-cp hooks/post-rewrite .git/hooks/post-rewrite
-chmod +x .git/hooks/post-rewrite
-```
-
-## Maintain your proposal repo
-
-  1. Make your changes to `spec.emu` (ecmarkup uses HTML syntax, but is not HTML, so I strongly suggest not naming it ".html")
-  1. Any commit that makes meaningful changes to the spec, should run `npm run build` and commit the resulting output.
-  1. Whenever you update `ecmarkup`, run `npm run build` and commit any changes that come from that dependency.
+Background: tc39/ecma402#215
