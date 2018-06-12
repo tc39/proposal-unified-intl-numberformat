@@ -8,8 +8,7 @@
       <h1>SetNumberFormatDigitOptions ( _intlObj_, _options_, _mnfdDefault_, _mxfdDefault_ )</h1>
 
       <p>
-        The abstract operation SetNumberFormatDigitOptions applies digit
-        options used for number formatting onto the intl object.
+        The abstract operation SetNumberFormatDigitOptions resolves the user-specified options in the digits realm onto the digits options object.
       </p>
       <emu-alg>
         1. Assert: Type(_intlObj_) is Object.
@@ -22,14 +21,17 @@
         1. Let _mxfd_ be ? GetNumberOption(_options_, `"maximumFractionDigits"`, _mnfd_, 20, _mxfdActualDefault_).
         1. Let _mnsd_ be ? Get(_options_, `"minimumSignificantDigits"`).
         1. Let _mxsd_ be ? Get(_options_, `"maximumSignificantDigits"`).
-        1. Set _intlObj_.[[MinimumIntegerDigits]] to mnid.
-        1. Set _intlObj_.[[MinimumFractionDigits]] to mnfd.
-        1. Set _intlObj_.[[MaximumFractionDigits]] to mxfd.
         1. If _mnsd_ is not *undefined* or _mxsd_ is not *undefined*, then
+          1. Set _intlObj_.[[RoundingType]] to `"significantDigits"`
           1. Let _mnsd_ be ? DefaultNumberOption(_mnsd_, 1, 21, 1).
           1. Let _mxsd_ be ? DefaultNumberOption(_mxsd_, _mnsd_, 21, 21).
           1. Set _intlObj_.[[MinimumSignificantDigits]] to mnsd.
           1. Set _intlObj_.[[MaximumSignificantDigits]] to mxsd.
+        1. Else,
+          1. Set _intlObj_.[[RoundingType]] to `"fractionDigits"`
+          1. Set _intlObj_.[[MinimumIntegerDigits]] to mnid.
+          1. Set _intlObj_.[[MinimumFractionDigits]] to mnfd.
+          1. Set _intlObj_.[[MaximumFractionDigits]] to mxfd.
       </emu-alg>
     </emu-clause>
 
@@ -54,27 +56,18 @@
         1. Set _numberFormat_.[[Locale]] to _r_.[[locale]].
         1. Set _numberFormat_.[[NumberingSystem]] to _r_.[[nu]].
         1. Let _dataLocale_ be _r_.[[dataLocale]].
-        1. Let _style_ be ? GetOption(_options_, `"style"`, `"string"`, &laquo; `"decimal"`, `"percent"`, `"currency"` &raquo;, `"decimal"`).
-        1. Set _numberFormat_.[[Style]] to _style_.
-        1. Let _currency_ be ? GetOption(_options_, `"currency"`, `"string"`, *undefined*, *undefined*).
-        1. If _currency_ is not *undefined*, then
-          1. If the result of IsWellFormedCurrencyCode(_currency_) is *false*, throw a *RangeError* exception.
-        1. If _style_ is `"currency"` and _currency_ is *undefined*, throw a *TypeError* exception.
+        1. Perform ? SetNumberFormatUnitOptions(_numberFormat_, _options_).
+        1. Let _style_ be _numberFormat_.[[Style]].
         1. If _style_ is `"currency"`, then
-          1. Let _currency_ be the result of converting _currency_ to upper case as specified in <emu-xref href="#sec-case-sensitivity-and-case-mapping"></emu-xref>.
-          1. Set _numberFormat_.[[Currency]] to _currency_.
-          1. Let _cDigits_ be CurrencyDigits(_currency_).
-        1. Let _currencyDisplay_ be ? GetOption(_options_, `"currencyDisplay"`, `"string"`, &laquo; `"code"`, `"symbol"`, `"name"` &raquo;, `"symbol"`).
-        1. If _style_ is `"currency"`, set _numberFormat_.[[CurrencyDisplay]] to _currencyDisplay_.
-        1. If _style_ is `"currency"`, then
+          1. Let _cDigits_ be CurrencyDigits(_numberFormat_.[[Currency]]).
           1. Let _mnfdDefault_ be _cDigits_.
           1. Let _mxfdDefault_ be _cDigits_.
+        1. Else If _style_ is `"percent"`, then
+          1. Let _mnfdDefault_ be 0.
+          1. Let _mxfdDefault_ be 0.
         1. Else,
           1. Let _mnfdDefault_ be 0.
-          1. If _style_ is `"percent"`, then
-            1. Let _mxfdDefault_ be 0.
-          1. Else,
-            1. Let _mxfdDefault_ be 3.
+          1. Let _mxfdDefault_ be 3.
         1. Perform ? SetNumberFormatDigitOptions(_numberFormat_, _options_, _mnfdDefault_, _mxfdDefault_).
         1. Let _useGrouping_ be ? GetOption(_options_, `"useGrouping"`, `"boolean"`, *undefined*, *true*).
         1. Set _numberFormat_.[[UseGrouping]] to _useGrouping_.
@@ -462,6 +455,38 @@
         1. Return _nf_.
       </emu-alg>
       <emu-note>See <emu-xref href="#legacy-constructor"></emu-xref> for the motivation of the normative optional text.</emu-note>
+    </emu-clause>
+
+    <emu-clause id="sec-setnumberformatunitoptions" aoid="SetNumberFormatUnitOptions">
+      <h1>SetNumberFormatUnitOptions ( _intlObj_, _options_ )</h1>
+      <p>
+        The abstract operation SetNumberFormatUnitOptions resolves the user-specified options in the units realm onto the unit options object.
+      </p>
+      <emu-alg>
+        1. Assert: Type(_intlObj_) is Object.
+        1. Assert: Type(_options_) is Object.
+        1. Let _style_ be ? GetOption(_options_, `"style"`, `"string"`, &laquo; `"decimal"`, `"percent"`, `"currency"`, `"unit"` &raquo;, `"decimal"`).
+        1. Set _intlObj_.[[Style]] to _style_.
+        1. Let _currency_ be ? GetOption(_options_, `"currency"`, `"string"`, *undefined*, *undefined*).
+        1. Let _currencyDisplay_ be ? GetOption(_options_, `"currencyDisplay"`, `"string"`, &laquo; `"code"`, `"symbol"`, `"name"` &raquo;, `"symbol"`).
+        1. Let _unit_ be ? GetOption(_options_, `"unit"`, `"string"`, *undefined*, *undefined*).
+        1. Let _unitDisplay_ be ? GetOption(_options_, `"currencyDisplay"`, `"string"`, &laquo; `"short"`, `"narrow"`, `"long"` &raquo;, `"short"`).
+        1. If _style_ is `"currency"`, then
+          1. If _currency_ is *undefined*, throw a *TypeError* exception.
+          1. If the result of IsWellFormedCurrencyCode(_currency_) is *false*, throw a *RangeError* exception.
+          1. Let _currency_ be the result of converting _currency_ to upper case as specified in <emu-xref href="#sec-case-sensitivity-and-case-mapping"></emu-xref>.
+          1. Set _intlObj_.[[UnitType]] to `"currency"`.
+          1. Set _intlObj_.[[Currency]] to _currency_.
+          1. Set _intlObj_.[[CurrencyDisplay]] to _currencyDisplay_.
+        1. If _style_ is `"percent"`, then
+          1. Let _unit_ be `"concentr-percent"`.
+        1. If _style_ is `"unit"` or _style_ is `"percent"`, then
+          1. If _unit_ is *undefined*, throw a *TypeError* exception.
+          1. If the result of IsWellFormedUnitIdentifier(_unit_) is *false*, throw a *RangeError* exception.
+          1. Set _intlObj_.[[UnitType]] to `"unit"`.
+          1. Set _intlObj_.[[Unit]] to _unit_.
+          1. Set _intlObj_.[[UnitDisplay]] to _unitDisplay_.
+      </emu-alg>
     </emu-clause>
   </emu-clause>
 
