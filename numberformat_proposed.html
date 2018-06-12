@@ -471,6 +471,8 @@
         1. Let _currencyDisplay_ be ? GetOption(_options_, `"currencyDisplay"`, `"string"`, &laquo; `"code"`, `"symbol"`, `"name"` &raquo;, `"symbol"`).
         1. Let _unit_ be ? GetOption(_options_, `"unit"`, `"string"`, *undefined*, *undefined*).
         1. Let _unitDisplay_ be ? GetOption(_options_, `"currencyDisplay"`, `"string"`, &laquo; `"short"`, `"narrow"`, `"long"` &raquo;, `"short"`).
+        1. If _style_ is `"decimal"`, then
+          1. Set _intlObj_.[[UnitType]] to `"none"`.
         1. If _style_ is `"currency"`, then
           1. If _currency_ is *undefined*, throw a *TypeError* exception.
           1. If the result of IsWellFormedCurrencyCode(_currency_) is *false*, throw a *RangeError* exception.
@@ -747,13 +749,18 @@
     <ul>
       <li>[[Locale]] is a String value with the language tag of the locale whose localization is used for formatting.</li>
       <li>[[NumberingSystem]] is a String value with the "type" given in Unicode Technical Standard 35 for the numbering system used for formatting.</li>
-      <li>[[Style]] is one of the String values `"decimal"`, `"currency"`, or `"percent"`, identifying the number format style used.</li>
-      <li>[[Currency]] is a String value with the currency code identifying the currency to be used if formatting with the `"currency"` style. It is only used when [[Style]] has the value `"currency"`.</li>
-      <li>[[CurrencyDisplay]] is one of the String values `"code"`, `"symbol"`, or `"name"`, specifying whether to display the currency as an ISO 4217 alphabetic currency code, a localized currency symbol, or a localized currency name if formatting with the `"currency"` style. It is only used when [[Style]] has the value `"currency"`.</li>
+      <li>[[Style]] is one of the String values `"decimal"`, `"currency"`, `"percent"`, or `"unit"`. This value corresponds closely with the [[UnitType]] value.</li>
+      <li>[[UnitType]] is one of the String values `"none"`, `"currency"`, or `"unit"`. The value `"unit"` is used for both [[Style]] `"percent"` and `"unit"`.</li>
+      <li>[[Unit]] is a string corresponding to a CLDR unit identifier. It is only used with [[UnitType]] has the value `"unit"`.</li>
+      <li>[[UnitDisplay]] is one of the String values `"short"`, `"narrow"`, or `"long"`, specifying whether to display the unit as a symbol, narrow symbol, or localized long name if formatting with the `"unit"` unit type. It is only used with [[UnitType]] has the value `"unit"`.</li>
+      <li>[[Currency]] is a String value with the currency code identifying the currency to be used if formatting with the `"currency"` unit type. It is only used when [[UnitType]] has the value `"currency"`.</li>
+      <li>[[CurrencyDisplay]] is one of the String values `"code"`, `"symbol"`, or `"name"`, specifying whether to display the currency as an ISO 4217 alphabetic currency code, a localized currency symbol, or a localized currency name if formatting with the `"currency"` style. It is only used when [[UnitType]] has the value `"currency"`.</li>
+      <li>[[CurrencySignDisplay]] is one of the String values `"standard"` or `"accounting"`, specifying whether to render negative numbers in accounting format, often signified by parenthesis. It is only used when [[UnitType]] has the value `"currency"` and when [[SignDisplay]] is not `"never"`.</li>
       <li>[[MinimumIntegerDigits]] is a non-negative integer Number value indicating the minimum integer digits to be used. Numbers will be padded with leading zeroes if necessary.</li>
       <li>[[MinimumFractionDigits]] and [[MaximumFractionDigits]] are non-negative integer Number values indicating the minimum and maximum fraction digits to be used. Numbers will be rounded or padded with trailing zeroes if necessary.</li>
       <li>[[MinimumSignificantDigits]] and [[MaximumSignificantDigits]] are positive integer Number values indicating the minimum and maximum fraction digits to be shown. Either none or both of these properties are present; if they are, they override minimum and maximum integer and fraction digits – the formatter uses however many integer and fraction digits are required to display the specified number of significant digits.</li>
       <li>[[UseGrouping]] is a Boolean value indicating whether a grouping separator should be used.</li>
+      <li>[[SignDisplay]] is one of the String values `"auto"`, `"always"`, `"never"`, or `"except-zero"`, specifying whether to show the sign on negative numbers only, positive and negative numbers including zero, neither positive nor negative numbers, or positive and negative numbers but not zero.</li>
       <li>[[PositivePattern]] and [[NegativePattern]] are String values as described in <emu-xref href="#sec-intl.numberformat-internal-slots"></emu-xref>.</li>
     </ul>
 
