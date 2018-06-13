@@ -69,6 +69,10 @@
           1. Let _mnfdDefault_ be 0.
           1. Let _mxfdDefault_ be 3.
         1. Perform ? SetNumberFormatDigitOptions(_numberFormat_, _options_, _mnfdDefault_, _mxfdDefault_).
+        1. Let _notation_ be ? GetOption(_options_, `"notation"`, `"string"`, &laquo; `"standard"`, `"scientific"`, `"engineering"`, `"compact"` &raquo;, `"standard"`).
+        1. Set _numberFormat_.[[Notation]] to _notation_.
+        1. Let _notationDisplay_ be ? GetOption(_options_, `"notationDisplay"`, `"string"`, &laquo; `"short"`, `"long"` &raquo;, `"short"`).
+        1. Set _numberFormat_.[[NotationDisplay]] to _notationDisplay_.
         1. Let _useGrouping_ be ? GetOption(_options_, `"useGrouping"`, `"boolean"`, *undefined*, *true*).
         1. Set _numberFormat_.[[UseGrouping]] to _useGrouping_.
         1. Let _signDisplay_ be ? GetOption(_options_, `"signDisplay"`, `"string"`, &laquo; `"auto"`, `"never"`, `"always"`, `"except-zero"` &raquo;, `"auto"`).
@@ -137,6 +141,7 @@
       </p>
 
       <emu-alg>
+        1. TODO: Deal with notation here.
         1. If _x_ is *NaN*, then
           1. Let _n_ be an ILD String value indicating the *NaN* value.
         1. Else if _x_ is not a finite Number,
@@ -574,7 +579,7 @@
 
       <emu-alg>
         1. If NewTarget is *undefined*, let _newTarget_ be the active function object, else let _newTarget_ be NewTarget.
-        1. Let _numberFormat_ be ? OrdinaryCreateFromConstructor(_newTarget_, `"%NumberFormatPrototype%"`, &laquo; [[InitializedNumberFormat]], [[Locale]], [[DataLocale]], [[NumberingSystem]], [[Style]], [[UnitType]], [[MeasureUnit]], [[MeasureUnitDisplay]], [[Currency]], [[CurrencyDisplay]], [[CurrencySignDisplay]], [[MinimumIntegerDigits]], [[MinimumFractionDigits]], [[MaximumFractionDigits]], [[MinimumSignificantDigits]], [[MaximumSignificantDigits]], [[UseGrouping]], [[SignDisplay]], [[BoundFormat]] &raquo;).
+        1. Let _numberFormat_ be ? OrdinaryCreateFromConstructor(_newTarget_, `"%NumberFormatPrototype%"`, &laquo; [[InitializedNumberFormat]], [[Locale]], [[DataLocale]], [[NumberingSystem]], [[Style]], [[UnitType]], [[MeasureUnit]], [[MeasureUnitDisplay]], [[Currency]], [[CurrencyDisplay]], [[CurrencySignDisplay]], [[MinimumIntegerDigits]], [[MinimumFractionDigits]], [[MaximumFractionDigits]], [[MinimumSignificantDigits]], [[MaximumSignificantDigits]], [[Notation]], [[NotationDisplay]], [[UseGrouping]], [[SignDisplay]], [[BoundFormat]] &raquo;).
         1. Perform ? InitializeNumberFormat(_numberFormat_, _locales_, _options_).
       </emu-alg>
       <emu-normative-optional>
@@ -801,6 +806,14 @@
             <td>`"maximumSignificantDigits"`</td>
           </tr>
           <tr>
+            <td>[[Notation]]</td>
+            <td>`"notation"`</td>
+          </tr>
+          <tr>
+            <td>[[NotationDisplay]]</td>
+            <td>`"notationDisplay"`</td>
+          </tr>
+          <tr>
             <td>[[UseGrouping]]</td>
             <td>`"useGrouping"`</td>
           </tr>
@@ -842,6 +855,8 @@
       <li>[[MinimumIntegerDigits]] is a non-negative integer Number value indicating the minimum integer digits to be used. Numbers will be padded with leading zeroes if necessary.</li>
       <li>[[MinimumFractionDigits]] and [[MaximumFractionDigits]] are non-negative integer Number values indicating the minimum and maximum fraction digits to be used. Numbers will be rounded or padded with trailing zeroes if necessary.</li>
       <li>[[MinimumSignificantDigits]] and [[MaximumSignificantDigits]] are positive integer Number values indicating the minimum and maximum fraction digits to be shown. Either none or both of these properties are present; if they are, they override minimum and maximum integer and fraction digits – the formatter uses however many integer and fraction digits are required to display the specified number of significant digits.</li>
+      <li>[[Notation]]  is one of the String values `"standard"`, `"scientific"`, `"engineering"`, or `"compact"`, specifying whether the number should be displayed without scaling, scaled to the units place with the power of ten in scientific notation, scaled to the nearest thousand with the power of ten in scientific notation, or scaled to the nearest locale-dependent compact decimal notation power of ten with the corresponding compact decimal notation affix.</li>
+      <li>[[NotationDisplay]] is one of the String values `"short"` or `"long"`, specifying whether to display compact notation affixes in short form ("5K") or long form ("5 thousand") if formatting with the `"compact"` notation. It is only used when [[Notation]] has the value `"compact"`.</li>
       <li>[[UseGrouping]] is a Boolean value indicating whether a grouping separator should be used.</li>
       <li>[[SignDisplay]] is one of the String values `"auto"`, `"always"`, `"never"`, or `"except-zero"`, specifying whether to show the sign on negative numbers only, positive and negative numbers including zero, neither positive nor negative numbers, or positive and negative numbers but not zero.</li>
     </ul>
