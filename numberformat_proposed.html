@@ -196,18 +196,36 @@
           1. Else if _p_ is equal `"minusSign"`, then
             1. Let _minusSignSymbol_ be the ILND String representing the minus sign.
             1. Append a new Record { [[Type]]: `"minusSign"`, [[Value]]: _minusSignSymbol_ } as the last element of _result_.
-          1. Else if _p_ is equal `"percentSign"` and _numberFormat_.[[Style]] is `"percent"`, then
+          1. Else if _p_ is equal `"percentSign"`, then
             1. Let _percentSignSymbol_ be the ILND String representing the percent sign.
             1. Append a new Record { [[Type]]: `"percentSign"`, [[Value]]: _percentSignSymbol_ } as the last element of _result_.
-          1. Else if _p_ is equal `"currency"` and _numberFormat_.[[Style]] is `"currency"`, then
+          1. Else if _p_ is equal `"measureUnitSymbol"` and _numberFormat_.[[UnitType]] is `"unit"`, then
+            1. Let _measureUnit_ be _numberFormat_.[[MeasureUnit]].
+            1. Let _mu_ be an ILD string representing _measureUnit_ in short form, which may depend on _x_ in languages having different plural forms. If the implementation does not have such a representation of _currency_, use _measureUnit_ itself.
+            1. Append a new Record { [[Type]]: `"unit"`, [[Value]]: _mu_ } as the last element of _result_.
+          1. Else if _p_ is equal `"measureUnitNarrowSymbol"` and _numberFormat_.[[UnitType]] is `"currency"`, then
+            1. Let _measureUnit_ be _numberFormat_.[[MeasureUnit]].
+            1. Let _mu_ be an ILD string representing _measureUnit_ in narrow form, which may depend on _x_ in languages having different plural forms. If the implementation does not have such a representation of _currency_, use _measureUnit_ itself.
+            1. Append a new Record { [[Type]]: `"unit"`, [[Value]]: _mu_ } as the last element of _result_.
+          1. Else if _p_ is equal `"measureUnitName"` and _numberFormat_.[[UnitType]] is `"currency"`, then
+            1. Let _measureUnit_ be _numberFormat_.[[MeasureUnit]].
+            1. Let _mu_ be an ILD string representing _measureUnit_ in long form, which may depend on _x_ in languages having different plural forms. If the implementation does not have such a representation of _currency_, use _measureUnit_ itself.
+            1. Append a new Record { [[Type]]: `"unit"`, [[Value]]: _mu_ } as the last element of _result_.
+          1. Else if _p_ is equal `"currencyCode"` and _numberFormat_.[[UnitType]] is `"currency"`, then
             1. Let _currency_ be _numberFormat_.[[Currency]].
-            1. Assert: _numberFormat_.[[CurrencyDisplay]] is `"code"`, `"symbol"` or `"name"`.
-            1. If _numberFormat_.[[CurrencyDisplay]] is `"code"`, then
-              1. Let _cd_ be _currency_.
-            1. Else if _numberFormat_.[[CurrencyDisplay]] is `"symbol"`, then
-              1. Let _cd_ be an ILD string representing _currency_ in short form. If the implementation does not have such a representation of _currency_, use _currency_ itself.
-            1. Else if _numberFormat_.[[CurrencyDisplay]] is `"name"`, then
-              1. Let _cd_ be an ILD string representing _currency_ in long form. If the implementation does not have such a representation of _currency_, use _currency_ itself.
+            1. Let _cd_ be _currency_.
+            1. Append a new Record { [[Type]]: `"currency"`, [[Value]]: _cd_ } as the last element of _result_.
+          1. Else if _p_ is equal `"currencySymbol"` and _numberFormat_.[[UnitType]] is `"currency"`, then
+            1. Let _currency_ be _numberFormat_.[[Currency]].
+            1. Let _cd_ be an ILD string representing _currency_ in short form. If the implementation does not have such a representation of _currency_, use _currency_ itself.
+            1. Append a new Record { [[Type]]: `"currency"`, [[Value]]: _cd_ } as the last element of _result_.
+          1. Else if _p_ is equal `"currencyNarrowSymbol"` and _numberFormat_.[[UnitType]] is `"currency"`, then
+            1. Let _currency_ be _numberFormat_.[[Currency]].
+            1. Let _cd_ be an ILD string representing _currency_ in narrow form. If the implementation does not have such a representation of _currency_, use _currency_ itself.
+            1. Append a new Record { [[Type]]: `"currency"`, [[Value]]: _cd_ } as the last element of _result_.
+          1. Else if _p_ is equal `"currencyName"` and _numberFormat_.[[UnitType]] is `"currency"`, then
+            1. Let _currency_ be _numberFormat_.[[Currency]].
+            1. Let _cd_ be an ILD string representing _currency_ in long form, which may depend on _x_ in languages having different plural forms. If the implementation does not have such a representation of _currency_, use _currency_ itself.
             1. Append a new Record { [[Type]]: `"currency"`, [[Value]]: _cd_ } as the last element of _result_.
           1. Else,
             1. Let _literal_ be the substring of _pattern_ from position _beginIndex_, inclusive, to position _endIndex_, inclusive.
@@ -500,7 +518,7 @@
     <emu-clause id="sec-getnumberformatpattern" aoid="GetNumberFormatPattern">
       <h1>GetNumberFormatPattern ( _numberFormat_, _x_ )</h1>
       <p>
-        The abstract operation GetNumberFormatPattern considers the resolved options in the number format object along with the final scaled and rounded number being formatted and returns a pattern, a String value as described in <emu-xref href="#sec-intl.numberformat-internal-slots"></emu-xref>. 
+        The abstract operation GetNumberFormatPattern considers the resolved unit-related options in the number format object along with the final scaled and rounded number being formatted and returns a pattern, a String value as described in <emu-xref href="#sec-intl.numberformat-internal-slots"></emu-xref>. 
       </p>
       <emu-alg>
         1. Let _localeData_ be %NumberFormat%.[[LocaleData]].
@@ -514,11 +532,17 @@
         1. If _unitType_ is `"measure-unit"`, then
           1. Let _measureUnit_ be _numberFormat_.[[MeasureUnit]].
           1. Let _measureUnitDisplay_ be _numberFormat_.[[MeasureUnitDisplay]].
+          1. If _patterns_.[[&lt;_measureUnit_&gt;]] is *undefined*, then
+            1. Let _measureUnit_ be `"fallback"`.
           1. Let _patterns_ be _patterns_.[[&lt;_measureUnit_&gt;]].
           1. Let _patterns_ be _patterns_.[[&lt;_measureUnitDisplay_&gt;]].
         1. Else If _unitType_ is `"currency"`, then
+          1. Let _currency_ be _numberFormat_.[[Currency]].
           1. Let _currencyDisplay_ be _numberFormat_.[[CurrencyDisplay]].
           1. Let _currencySignDisplay_ be _numberFormat_.[[CurrencySignDisplay]].
+          1. If _patterns_.[[&lt;_currency_&gt;]] is *undefined*, then
+            1. Let _currency_ be `"fallback"`.
+          1. Let _patterns_ be _patterns_.[[&lt;_currency_&gt;]].
           1. Let _patterns_ be _patterns_.[[&lt;_currencyDisplay_&gt;]].
           1. Let _patterns_ be _patterns_.[[&lt;_currencySignDisplay_&gt;]].
         1. Else,
