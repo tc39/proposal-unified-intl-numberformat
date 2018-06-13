@@ -54,8 +54,8 @@
         1. Let _localeData_ be %NumberFormat%.[[LocaleData]].
         1. Let _r_ be ResolveLocale(%NumberFormat%.[[AvailableLocales]], _requestedLocales_, _opt_, %NumberFormat%.[[RelevantExtensionKeys]], _localeData_).
         1. Set _numberFormat_.[[Locale]] to _r_.[[locale]].
+        1. Set _numberFormat_.[[DataLocale]] to _r_.[[dataLocale]].
         1. Set _numberFormat_.[[NumberingSystem]] to _r_.[[nu]].
-        1. Let _dataLocale_ be _r_.[[dataLocale]].
         1. Perform ? SetNumberFormatUnitOptions(_numberFormat_, _options_).
         1. Let _style_ be _numberFormat_.[[Style]].
         1. If _style_ is `"currency"`, then
@@ -71,12 +71,8 @@
         1. Perform ? SetNumberFormatDigitOptions(_numberFormat_, _options_, _mnfdDefault_, _mxfdDefault_).
         1. Let _useGrouping_ be ? GetOption(_options_, `"useGrouping"`, `"boolean"`, *undefined*, *true*).
         1. Set _numberFormat_.[[UseGrouping]] to _useGrouping_.
-        1. Let _dataLocaleData_ be _localeData_.[[&lt;_dataLocale_&gt;]].
-        1. Let _patterns_ be _dataLocaleData_.[[patterns]].
-        1. Assert: _patterns_ is a record (see <emu-xref href="#sec-intl.numberformat-internal-slots"></emu-xref>).
-        1. Let _stylePatterns_ be _patterns_.[[&lt;_style_&gt;]].
-        1. Set _numberFormat_.[[PositivePattern]] to _stylePatterns_.[[positivePattern]].
-        1. Set _numberFormat_.[[NegativePattern]] to _stylePatterns_.[[negativePattern]].
+        1. Let _signDisplay_ be ? GetOption(_options_, `"signDisplay"`, `"string"`, &laquo; `"auto"`, `"never"`, `"always"`, `"except-zero"` &raquo;, `"auto"`).
+        1. Set _numberFormat_.[[SignDisplay]] to _signDisplay_.
         1. Return _numberFormat_.
       </emu-alg>
     </emu-clause>
@@ -116,15 +112,20 @@
       <h1>FormatNumberToString ( _intlObject_, _x_ )</h1>
 
       <p>
-        The FormatNumberToString abstract operation is called with arguments _intlObject_ (which must be an object with [[MinimumSignificantDigits]], [[MaximumSignificantDigits]], [[MinimumIntegerDigits]], [[MinimumFractionDigits]], and [[MaximumFractionDigits]] internal slots), and _x_ (which must be a Number value), and returns _x_ as a string value with digits formatted according to the five formatting parameters.
+        The FormatNumberToString abstract operation is called with arguments _intlObject_ (which must be an object with [[MinimumSignificantDigits]], [[MaximumSignificantDigits]], [[MinimumIntegerDigits]], [[MinimumFractionDigits]], and [[MaximumFractionDigits]] internal slots), and _x_ (which must be a Number value), and returns a tuple containing two values: _x_ as a string value with digits formatted according to the five formatting parameters, and the final floating decimal value of _x_ after rounding has been performed.
       </p>
 
       <emu-alg>
+        1. Let _isNegative_ be _x_ < 0.
+        1. If _isNegative_, then
+          1. Let _x_ be -_x_.
         1. If _intlObject_.[[MinimumSignificantDigits]] and _intlObject_.[[MaximumSignificantDigits]] are both not *undefined*, then
-          1. Let _result_ be ToRawPrecision(_x_, _intlObject_.[[MinimumSignificantDigits]], _intlObject_.[[MaximumSignificantDigits]]).
+          1. Let [_result_, _xFinal_] be ToRawPrecision(_x_, _intlObject_.[[MinimumSignificantDigits]], _intlObject_.[[MaximumSignificantDigits]]).
         1. Else,
-          1. Let _result_ be ToRawFixed(_x_, _intlObject_.[[MinimumIntegerDigits]], _intlObject_.[[MinimumFractionDigits]], _intlObject_.[[MaximumFractionDigits]]).
-        1. Return _result_.
+          1. Let [_result_, _xFinal_] be ToRawFixed(_x_, _intlObject_.[[MinimumIntegerDigits]], _intlObject_.[[MinimumFractionDigits]], _intlObject_.[[MaximumFractionDigits]]).
+        1. If _isNegative_, then
+          1. Let _xFinal_ be -_xFinal_.
+        1. Return the tuple [_result_, _xFinal_].
       </emu-alg>
     </emu-clause>
 
@@ -136,11 +137,14 @@
       </p>
 
       <emu-alg>
-        1. If _x_ is not *NaN* and _x_ < 0, then
-          1. Let _x_ be -_x_.
-          1. Let _pattern_ be _numberFormat_.[[NegativePattern]].
+        1. If _x_ is *NaN*, then
+          1. Let _n_ be an ILD String value indicating the *NaN* value.
+        1. Else if _x_ is not a finite Number,
+          1. Let _n_ be an ILD String value indicating infinity.
         1. Else,
-          1. Let _pattern_ be _numberFormat_.[[PositivePattern]].
+          1. If _numberFormat_.[[Style]] is `"percent"`, let _x_ be 100 × _x_.
+          1. Let [_n_, _x_] be FormatNumberToString(_numberFormat_, _x_).
+        1. Let _pattern_ be GetNumberFormatPattern(_numberFormat_, _x_)
         1. Let _result_ be a new empty List.
         1. Let _beginIndex_ be Call(%StringProto_indexOf%, _pattern_, &laquo; `"{"`, 0 &raquo;).
         1. Let _endIndex_ be 0.
@@ -155,14 +159,11 @@
           1. Let _p_ be the substring of _pattern_ from position _beginIndex_, exclusive, to position _endIndex_, exclusive.
           1. If _p_ is equal `"number"`, then
             1. If _x_ is *NaN*, then
-              1. Let _n_ be an ILD String value indicating the *NaN* value.
               1. Append a new Record { [[Type]]: `"nan"`, [[Value]]: _n_ } as the last element of _result_.
             1. Else if _x_ is not a finite Number,
               1. Let _n_ be an ILD String value indicating infinity.
               1. Append a new Record { [[Type]]: `"infinity"`, [[Value]]: _n_ } as the last element of _result_.
             1. Else,
-              1. If _numberFormat_.[[Style]] is `"percent"`, let _x_ be 100 × _x_.
-              1. Let _n_ be FormatNumberToString(_numberFormat_, _x_).
               1. If the _numberFormat_.[[NumberingSystem]] matches one of the values in the `"Numbering System"` column of <emu-xref href="#table-numbering-system-digits"></emu-xref> below, then
                 1. Let _digits_ be a List whose 10 String valued elements are the UTF-16 string representations of the 10 _digits_ specified in the `"Digits"` column of the matching row in <emu-xref href="#table-numbering-system-digits"></emu-xref>.
                 1. Replace each _digit_ in _n_ with the value of _digits_[_digit_].
@@ -377,9 +378,11 @@
         1. If _x_ = 0, then
           1. Let _m_ be the String consisting of _p_ occurrences of the character `"0"`.
           1. Let _e_ be 0.
+          1. Let _xFinal_ be 0.
         1. Else,
           1. Let _e_ and _n_ be integers such that 10<sup>_p_–1</sup> ≤ _n_ < 10<sup>_p_</sup> and for which the exact mathematical value of _n_ × 10<sup>_e_–_p_+1</sup> – _x_ is as close to zero as possible. If there are two such sets of _e_ and _n_, pick the _e_ and _n_ for which _n_ × 10<sup>_e_–_p_+1</sup> is larger.
           1. Let _m_ be the String consisting of the digits of the decimal representation of _n_ (in order, with no leading zeroes).
+          1. Let _xFinal_ be _n_ × 10<sup>_e_–_p_+1</sup>.
         1. If _e_ ≥ _p_, then
           1. Return the concatenation of _m_ and _e_-_p_+1 occurrences of the character `"0"`.
         1. If _e_ = _p_-1, then
@@ -395,7 +398,7 @@
             1. Decrease _cut_ by 1.
           1. If the last character of _m_ is `"."`, then
             1. Remove the last character from _m_.
-        1. Return _m_.
+        1. Return the tuple [_m_, _xFinal_].
       </emu-alg>
     </emu-clause>
 
@@ -409,6 +412,7 @@
       <emu-alg>
         1. Let _f_ be _maxFraction_.
         1. Let _n_ be an integer for which the exact mathematical value of _n_ ÷ 10<sup>_f_</sup> – _x_ is as close to zero as possible. If there are two such _n_, pick the larger _n_.
+        1. Let _xFinal_ be _n_ ÷ 10<sup>_f_</sup>.
         1. If _n_ = 0, let _m_ be the String `"0"`. Otherwise, let _m_ be the String consisting of the digits of the decimal representation of _n_ (in order, with no leading zeroes).
         1. If _f_ ≠ 0, then
           1. Let _k_ be the number of characters in _m_.
@@ -429,7 +433,7 @@
         1. If _int_ < _minInteger_, then
           1. Let _z_ be the String consisting of _minInteger_–_int_ occurrences of the character `"0"`.
           1. Let _m_ be the concatenation of Strings _z_ and _m_.
-        1. Return _m_.
+        1. Return the tuple [_m_, _xFinal_].
       </emu-alg>
     </emu-clause>
 
@@ -471,6 +475,7 @@
         1. Let _currencyDisplay_ be ? GetOption(_options_, `"currencyDisplay"`, `"string"`, &laquo; `"code"`, `"symbol"`, `"name"` &raquo;, `"symbol"`).
         1. Let _unit_ be ? GetOption(_options_, `"unit"`, `"string"`, *undefined*, *undefined*).
         1. Let _unitDisplay_ be ? GetOption(_options_, `"currencyDisplay"`, `"string"`, &laquo; `"short"`, `"narrow"`, `"long"` &raquo;, `"short"`).
+        1. Let _currencySignDisplay_ be ? GetOption(_options_, `"currencySignDisplay"`, `"string"`, &laquo; `"standard"`, `"accounting"` &raquo;, `"standard"`).
         1. If _style_ is `"decimal"`, then
           1. Set _intlObj_.[[UnitType]] to `"none"`.
         1. If _style_ is `"currency"`, then
@@ -480,14 +485,51 @@
           1. Set _intlObj_.[[UnitType]] to `"currency"`.
           1. Set _intlObj_.[[Currency]] to _currency_.
           1. Set _intlObj_.[[CurrencyDisplay]] to _currencyDisplay_.
+          1. Set _intlObj_.[[CurrencySignDisplay]] to _currencySignDisplay_.
         1. If _style_ is `"percent"`, then
           1. Let _unit_ be `"concentr-percent"`.
         1. If _style_ is `"unit"` or _style_ is `"percent"`, then
           1. If _unit_ is *undefined*, throw a *TypeError* exception.
           1. If the result of IsWellFormedUnitIdentifier(_unit_) is *false*, throw a *RangeError* exception.
-          1. Set _intlObj_.[[UnitType]] to `"unit"`.
-          1. Set _intlObj_.[[Unit]] to _unit_.
-          1. Set _intlObj_.[[UnitDisplay]] to _unitDisplay_.
+          1. Set _intlObj_.[[UnitType]] to `"measure-unit"`.
+          1. Set _intlObj_.[[MeasureUnit]] to _unit_.
+          1. Set _intlObj_.[[MeasureUnitDisplay]] to _unitDisplay_.
+      </emu-alg>
+    </emu-clause>
+
+    <emu-clause id="sec-getnumberformatpattern" aoid="GetNumberFormatPattern">
+      <h1>GetNumberFormatPattern ( _numberFormat_, _x_ )</h1>
+      <p>
+        The abstract operation GetNumberFormatPattern considers the resolved options in the number format object along with the final scaled and rounded number being formatted and returns a pattern, a String value as described in <emu-xref href="#sec-intl.numberformat-internal-slots"></emu-xref>. 
+      </p>
+      <emu-alg>
+        1. Let _localeData_ be %NumberFormat%.[[LocaleData]].
+        1. Let _dataLocale_ be _numberFormat_.[[DataLocale]].
+        1. Let _dataLocaleData_ be _localeData_.[[&lt;_dataLocale_&gt;]].
+        1. Let _patterns_ be _dataLocaleData_.[[patterns]].
+        1. Assert: _patterns_ is a record (see <emu-xref href="#sec-intl.numberformat-internal-slots"></emu-xref>).
+        1. TODO: Is there a spec defining the format of _patterns_ that needs to be updated, too?
+        1. Let _unitType_ be _numberFormat_.[[UnitType]]
+        1. Let _patterns_ be _patterns_.[[&lt;_unitType_&gt;]].
+        1. If _unitType_ is `"measure-unit"`, then
+          1. Let _measureUnit_ be _numberFormat_.[[MeasureUnit]].
+          1. Let _measureUnitDisplay_ be _numberFormat_.[[MeasureUnitDisplay]].
+          1. Let _patterns_ be _patterns_.[[&lt;_measureUnit_&gt;]].
+          1. Let _patterns_ be _patterns_.[[&lt;_measureUnitDisplay_&gt;]].
+        1. Else If _unitType_ is `"currency"`, then
+          1. Let _currencyDisplay_ be _numberFormat_.[[CurrencyDisplay]].
+          1. Let _currencySignDisplay_ be _numberFormat_.[[CurrencySignDisplay]].
+          1. Let _patterns_ be _patterns_.[[&lt;_currencyDisplay_&gt;]].
+          1. Let _patterns_ be _patterns_.[[&lt;_currencySignDisplay_&gt;]].
+        1. Else,
+          1. Assert: _unitType_ is `"decimal"`.
+        1. If _x_ is not *NaN* and _x_ < 0, then
+          1. Let _pattern_ be _patterns_.[[negativePattern]].
+        1. Else If _x_ is 0, then
+          1. Let _pattern_ be _patterns_.[[zeroPattern]].
+        1. Else,
+          1. Let _pattern_ be _patterns_.[[positivePattern]].
+        1. return _pattern_.
       </emu-alg>
     </emu-clause>
   </emu-clause>
@@ -508,7 +550,7 @@
 
       <emu-alg>
         1. If NewTarget is *undefined*, let _newTarget_ be the active function object, else let _newTarget_ be NewTarget.
-        1. Let _numberFormat_ be ? OrdinaryCreateFromConstructor(_newTarget_, `"%NumberFormatPrototype%"`, &laquo; [[InitializedNumberFormat]], [[Locale]], [[NumberingSystem]], [[Style]], [[Currency]], [[CurrencyDisplay]], [[MinimumIntegerDigits]], [[MinimumFractionDigits]], [[MaximumFractionDigits]], [[MinimumSignificantDigits]], [[MaximumSignificantDigits]], [[UseGrouping]], [[PositivePattern]], [[NegativePattern]], [[BoundFormat]] &raquo;).
+        1. Let _numberFormat_ be ? OrdinaryCreateFromConstructor(_newTarget_, `"%NumberFormatPrototype%"`, &laquo; [[InitializedNumberFormat]], [[Locale]], [[DataLocale]], [[NumberingSystem]], [[Style]], [[UnitType]], [[MeasureUnit]], [[MeasureUnitDisplay]], [[Currency]], [[CurrencyDisplay]], [[CurrencySignDisplay]], [[MinimumIntegerDigits]], [[MinimumFractionDigits]], [[MaximumFractionDigits]], [[MinimumSignificantDigits]], [[MaximumSignificantDigits]], [[UseGrouping]], [[SignDisplay]], [[BoundFormat]] &raquo;).
         1. Perform ? InitializeNumberFormat(_numberFormat_, _locales_, _options_).
       </emu-alg>
       <emu-normative-optional>
@@ -695,12 +737,24 @@
             <td>`"style"`</td>
           </tr>
           <tr>
+            <td>[[MeasureUnit]]</td>
+            <td>`"unit"`</td>
+          </tr>
+          <tr>
+            <td>[[MeasureUnitDisplay]]</td>
+            <td>`"unitDisplay"`</td>
+          </tr>
+          <tr>
             <td>[[Currency]]</td>
             <td>`"currency"`</td>
           </tr>
           <tr>
             <td>[[CurrencyDisplay]]</td>
             <td>`"currencyDisplay"`</td>
+          </tr>
+          <tr>
+            <td>[[CurrencySignDisplay]]</td>
+            <td>`"currencySignDisplay"`</td>
           </tr>
           <tr>
             <td>[[MinimumIntegerDigits]]</td>
@@ -726,6 +780,10 @@
             <td>[[UseGrouping]]</td>
             <td>`"useGrouping"`</td>
           </tr>
+          <tr>
+            <td>[[SignDisplay]]</td>
+            <td>`"signDisplay"`</td>
+          </tr>
         </table>
       </emu-table>
     </emu-clause>
@@ -748,11 +806,12 @@
 
     <ul>
       <li>[[Locale]] is a String value with the language tag of the locale whose localization is used for formatting.</li>
+      <li>[[DataLocale]] is a String value with the language tag of the nearest locale for which the browser has data to perform the formatting operation.  (TODO: is this precisely correct??)</li>
       <li>[[NumberingSystem]] is a String value with the "type" given in Unicode Technical Standard 35 for the numbering system used for formatting.</li>
       <li>[[Style]] is one of the String values `"decimal"`, `"currency"`, `"percent"`, or `"unit"`. This value corresponds closely with the [[UnitType]] value.</li>
-      <li>[[UnitType]] is one of the String values `"none"`, `"currency"`, or `"unit"`. The value `"unit"` is used for both [[Style]] `"percent"` and `"unit"`.</li>
-      <li>[[Unit]] is a string corresponding to a CLDR unit identifier. It is only used with [[UnitType]] has the value `"unit"`.</li>
-      <li>[[UnitDisplay]] is one of the String values `"short"`, `"narrow"`, or `"long"`, specifying whether to display the unit as a symbol, narrow symbol, or localized long name if formatting with the `"unit"` unit type. It is only used with [[UnitType]] has the value `"unit"`.</li>
+      <li>[[UnitType]] is one of the String values `"none"`, `"currency"`, or `"measure-unit"`. The value `"measure-unit"` is used for both [[Style]] `"percent"` and `"unit"`.</li>
+      <li>[[MeasureUnit]] is a string corresponding to a CLDR unit identifier. It is only used with [[UnitType]] has the value `"measure-unit"`. The term "measure unit" is used for the purpose of the specification to distinguish between the unit type field and the manifestation of the unit type.</li>
+      <li>[[MeasureUnitDisplay]] is one of the String values `"short"`, `"narrow"`, or `"long"`, specifying whether to display the unit as a symbol, narrow symbol, or localized long name if formatting with the `"measure-unit"` unit type. It is only used with [[UnitType]] has the value `"measure-unit"`.</li>
       <li>[[Currency]] is a String value with the currency code identifying the currency to be used if formatting with the `"currency"` unit type. It is only used when [[UnitType]] has the value `"currency"`.</li>
       <li>[[CurrencyDisplay]] is one of the String values `"code"`, `"symbol"`, or `"name"`, specifying whether to display the currency as an ISO 4217 alphabetic currency code, a localized currency symbol, or a localized currency name if formatting with the `"currency"` style. It is only used when [[UnitType]] has the value `"currency"`.</li>
       <li>[[CurrencySignDisplay]] is one of the String values `"standard"` or `"accounting"`, specifying whether to render negative numbers in accounting format, often signified by parenthesis. It is only used when [[UnitType]] has the value `"currency"` and when [[SignDisplay]] is not `"never"`.</li>
@@ -761,7 +820,6 @@
       <li>[[MinimumSignificantDigits]] and [[MaximumSignificantDigits]] are positive integer Number values indicating the minimum and maximum fraction digits to be shown. Either none or both of these properties are present; if they are, they override minimum and maximum integer and fraction digits – the formatter uses however many integer and fraction digits are required to display the specified number of significant digits.</li>
       <li>[[UseGrouping]] is a Boolean value indicating whether a grouping separator should be used.</li>
       <li>[[SignDisplay]] is one of the String values `"auto"`, `"always"`, `"never"`, or `"except-zero"`, specifying whether to show the sign on negative numbers only, positive and negative numbers including zero, neither positive nor negative numbers, or positive and negative numbers but not zero.</li>
-      <li>[[PositivePattern]] and [[NegativePattern]] are String values as described in <emu-xref href="#sec-intl.numberformat-internal-slots"></emu-xref>.</li>
     </ul>
 
     <p>
