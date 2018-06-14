@@ -20,18 +20,49 @@ Rather than complicate `Intl` with more constructors with heavilly overlapping f
 
 Additional background: [Unified API for number formatting](https://github.com/tc39/ecma402/issues/215)
 
-## Spec Cleanup: Options Orthogonality
+## I. Spec Cleanup
 
-The NumberFormat specification as currently written entangles certain locale details with options resolution.  I propose to add an abstraction layer that maps user-specified options to a locale-agnostic set of orthogonal resolved options ("ResolvedOptions"), followed by a final step that maps those locale-agnostic set of options to the locale-sensitive number formatting details ("LocalizedOptions").
+Certain sections of the spec have been refactored with the following objectives:
 
-The spec cleanup into ResolvedOptions/LocalizedOptions should have no effect on behavior.
+- Fix https://github.com/tc39/ecma402/issues/238 (currency long name has dependency on plural form, and the currency long name pattern has dependency on currencyWidth).
+- Move pattern resolution out of the constructor to keep all internal fields of NumberFormat locale-agnostic, making it easier to reason about behavior in the format method.
 
-### Step 1: ResolvedOptions
+## II. Measure Units
 
-### Step 2: LocalizedOptions
+Units of measurement can be formatted as follows:
 
-## Measure Units
+```javascript
+(9.81).toLocaleString("en-US", {
+    style: "unit",
+    unit: "acceleration-meter-per-second-squared",
+    unitDisplay: "short"
+});
+// ==> "9.81 m/s²"
+```
 
-## Scientific and Compact Notation
+The syntax was discussed in #3.
 
-## Sign Display
+- `style` receives the string value "unit"
+- `unit` receives a string measure unit identifier, defined in [UTS #35](http://unicode.org/reports/tr35/tr35-general.html#Unit_Elements).  See also the [full list of unit identifiers](https://unicode.org/repos/cldr/tags/latest/common/validity/unit.xml).
+- `unitDisplay`, named after the corresponding setting for currencies, `currencyDisplay`, takes either "narrow", "short", or "long".
+
+## III. Scientific and Compact Notation
+
+Scientific and compact notation are represented by the new option `notation` and can be formatted as follows:
+
+```javascript
+(987654321).toLocaleString("en-US", {
+    notation: "scientific"
+});
+// ==> 9.877E8
+
+(987654321).toLocaleString("en-US", {
+    notation: "compact",
+    notationDisplay: "long"
+});
+// ==> 987.7 million
+```
+
+The syntax was discussed in #5.
+
+## IV. Sign Display
