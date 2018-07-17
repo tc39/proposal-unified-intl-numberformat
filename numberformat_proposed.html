@@ -120,7 +120,7 @@
       </p>
 
       <emu-alg>
-        1. Let _isNegative_ be _x_ < 0.
+        1. Let _isNegative_ be _x_ &lt; 0.
         1. If _isNegative_, then
           1. Let _x_ be -_x_.
         1. If _intlObject_.[[MinimumSignificantDigits]] and _intlObject_.[[MaximumSignificantDigits]] are both not *undefined*, then
@@ -141,17 +141,19 @@
       </p>
 
       <emu-alg>
-        1. TODO: Deal with notation here.
+        1. Let _exponent_ be 0.
         1. If _x_ is *NaN*, then
           1. Let _n_ be an ILD String value indicating the *NaN* value.
         1. Else if _x_ is not a finite Number,
           1. Let _n_ be an ILD String value indicating infinity.
         1. Else,
           1. If _numberFormat_.[[Style]] is `"percent"`, let _x_ be 100 × _x_.
+          1. Let _exponent_ be ComputeExponent(_numberFormat_, _x_).
+          1. Let _x_ be _x_ × 10<sup>-_exponent_</sup>.
           1. Let _formatNumberResult_ be FormatNumberToString(_numberFormat_, _x_).
           1. Let _n_ be _formatNumberResult_.[[FormattedString]].
           1. Let _x_ be _formatNumberResult_.[[RoundedNumber]].
-        1. Let _pattern_ be GetNumberFormatPattern(_numberFormat_, _x_)
+        1. Let _pattern_ be GetNumberFormatPattern(_numberFormat_, _x_, _exponent_)
         1. Let _result_ be a new empty List.
         1. Let _beginIndex_ be Call(%StringProto_indexOf%, _pattern_, &laquo; `"{"`, 0 &raquo;).
         1. Let _endIndex_ be 0.
@@ -202,6 +204,22 @@
           1. Else if _p_ is equal `"minusSign"`, then
             1. Let _minusSignSymbol_ be the ILND String representing the minus sign.
             1. Append a new Record { [[Type]]: `"minusSign"`, [[Value]]: _minusSignSymbol_ } as the last element of _result_.
+          1. Else if _p_ is equal `"compactSymbol"`, then
+            1. Let _compactSymbol_ be an ILD string representing _exponent_ in short form, which may depend on _x_ in languages having different plural forms. The implementation must be able to provide this string, or else the pattern would not have a `"{compactSymbol}"` placeholder.
+            1. Append a new Record { [[Type]]: `"compact"`, [[Value]]: _compactSymbol_ } as the last element of _result_.
+          1. Else if _p_ is equal `"compactName"`, then
+            1. Let _compactName_ be an ILD string representing _exponent_ in long form, which may depend on _x_ in languages having different plural forms. The implementation must be able to provide this string, or else the pattern would not have a `"{compactName}"` placeholder.
+            1. Append a new Record { [[Type]]: `"compact"`, [[Value]]: _compactName_ } as the last element of _result_.
+          1. Else if _p_ is equal `"scientificSeparator"`, then
+            1. Let _scientificSeparator_ be the ILND String representing the exponent separator.
+            1. Append a new Record { [[Type]]: `"exponentSeparator"`, [[Value]]: _scientificSeparator_ } as the last element of _result_.
+          1. Else if _p_ is equal `"scientificExponent"`, then
+            1. If _exponent_ &lt; 0, then
+              1. Let _minusSignSymbol_ be the ILND String representing the minus sign.
+              1. Append a new Record { [[Type]]: `"minusSign"`, [[Value]]: _minusSignSymbol_ } as the last element of _result_.
+              1. Let _exponent_ be -_multiplier.
+            1. Let _exponentResult_ be ToRawFixed(_exponent_, 1, 0, 0).
+            1. Append a new Record { [[Type]]: `"exponent"`, [[Value]]: _exponentResult_.[[FormattedString]] } as the last element of _result_.
           1. Else if _p_ is equal `"percentSign"`, then
             1. Let _percentSignSymbol_ be the ILND String representing the percent sign.
             1. Append a new Record { [[Type]]: `"percentSign"`, [[Value]]: _percentSignSymbol_ } as the last element of _result_.
@@ -515,14 +533,14 @@
         1. If _style_ is `"unit"` or _style_ is `"percent"`, then
           1. If _unit_ is *undefined*, throw a *TypeError* exception.
           1. If the result of IsWellFormedUnitIdentifier(_unit_) is *false*, throw a *RangeError* exception.
-          1. Set _intlObj_.[[UnitType]] to `"measure-unit"`.
+          1. Set _intlObj_.[[UnitType]] to `"measureUnit"`.
           1. Set _intlObj_.[[MeasureUnit]] to _unit_.
           1. Set _intlObj_.[[MeasureUnitDisplay]] to _unitDisplay_.
       </emu-alg>
     </emu-clause>
 
     <emu-clause id="sec-getnumberformatpattern" aoid="GetNumberFormatPattern">
-      <h1>GetNumberFormatPattern ( _numberFormat_, _x_ )</h1>
+      <h1>GetNumberFormatPattern ( _numberFormat_, _x_, _exponent_ )</h1>
       <p>
         The abstract operation GetNumberFormatPattern considers the resolved unit-related options in the number format object along with the final scaled and rounded number being formatted and returns a pattern, a String value as described in <emu-xref href="#sec-intl.numberformat-internal-slots"></emu-xref>. 
       </p>
@@ -534,7 +552,7 @@
         1. Assert: _patterns_ is a record (see <emu-xref href="#sec-intl.numberformat-internal-slots"></emu-xref>).
         1. Let _unitType_ be _numberFormat_.[[UnitType]].
         1. Let _patterns_ be _patterns_.[[&lt;_unitType_&gt;]].
-        1. If _unitType_ is `"measure-unit"`, then
+        1. If _unitType_ is `"measureUnit"`, then
           1. Let _measureUnit_ be _numberFormat_.[[MeasureUnit]].
           1. Let _measureUnitDisplay_ be _numberFormat_.[[MeasureUnitDisplay]].
           1. If _patterns_.[[&lt;_measureUnit_&gt;]] is *undefined*, then
@@ -553,15 +571,72 @@
         1. Else,
           1. Assert: _unitType_ is `"none"`.
           1. Let _patterns_ be _patterns_.[[`"decimal"`]].
-        Let _signDisplay_ be _numberFormat_.[[SignDisplay]].
-        Let _patterns_ be _patterns_.[[&lt;_signDisplay_&gt;]].
+        1. Let _signDisplay_ be _numberFormat_.[[SignDisplay]].
+        1. Let _patterns_ be _patterns_.[[&lt;_signDisplay_&gt;]].
+        1. Let _notation_ be _numberFormat_.[[Notation]].
+        1. Let _displayNotation_ be `"standard"`.
+        1. If _notation_ is `"scientific"` or _notation_ is `"engineering"`, then
+          1. Let _displayNotation_ be `"scientific"`.
+        1. Else If _exponent_ is not 0, then
+          1. Assert: _notation_ is `"compact"`.
+          1. Let _compactDisplay_ be _numberFormat_.[[CompactDisplay]].
+          1. If _compactDisplay is `"short"`, then
+            1. Let _displayNotation_ be `"compactShort"`.
+          1. Else,
+            1. Assert: _compactDisplay_ is `"long"`.
+            1. Let _displayNotation_ be `"compactLong"`.
+        1. Let _patterns_ be _patterns_.[[&lt;_displayNotation_&gt;]].
         1. If _x_ is not *NaN* and _x_ < 0, then
           1. Let _pattern_ be _patterns_.[[negativePattern]].
         1. Else If _x_ is 0, then
           1. Let _pattern_ be _patterns_.[[zeroPattern]].
         1. Else,
           1. Let _pattern_ be _patterns_.[[positivePattern]].
-        1. return _pattern_.
+        1. Return _pattern_.
+      </emu-alg>
+    </emu-clause>
+
+    <emu-clause id="sec-computeexponent" aoid="ComputeExponent">
+      <h1>ComputeExponent ( _numberFormat_, _x_ )</h1>
+      <p>
+        The abstract operation ComputeExponent computes an exponent (power of ten) by which to scale _x_ according to the number formatting settings.  It handles cases such as 999 rounding up to 1000, requiring a different exponent.
+      </p>
+      <emu-alg>
+        1. If _x_ is 0, then
+          1. Return 0.
+        1. If _x_ &lt; 0, then
+          1. Let _x_ = -_x_.
+        1. Let _magnitude_ be the greatest integer that is not greater than the base 10 logarithm of _x_.
+        1. Let _exponent_ be ComputeExponentForMagnitude(_numberFormat_, _magnitude_).
+        1. Let _x_ be _x_ × 10<sup>-_exponent_</sup>.
+        1. Let _formatNumberResult_ be FormatNumberToString(_numberFormat_, _x_).
+        1. If _formatNumberResult_.[[RoundedNumber]] == 0, then
+          1. Return _exponent_.
+        1. Let _newMagnitude_ be the greatest integer that is not greater than the base 10 logarithm of _x_.
+        1. If _newMagnitude_ is _magnitude_ – _exponent_, then
+          1. Return _exponent_.
+        1. Return ComputeExponentForMagnitude(_numberFormat_, _magnitude_ + 1).
+      </emu-alg>
+    </emu-clause>
+
+    <emu-clause id="sec-computeexponent" aoid="ComputeExponent">
+      <h1>ComputeExponentForMagnitude ( _numberFormat_, _magnitude_ )</h1>
+      <p>
+        The abstract operation ComputeExponentHelper computes an exponent by which to scale a number of the given magnitude (power of ten of the most significant digit) according to the locale and the desired notation (scientific, engineering, or compact).
+      </p>
+      <emu-alg>
+        1. Let _notation_ be _numberFormat_.[[Notation]].
+        1. If _notation_ is `"standard"`, then
+          1. Return 0.
+        1. Else If _notation_ is `"scientific"`, then
+          1. Return _magnitude_.
+        1. Else If _notation_ is `"engineering"`, then
+          1. Let _thousands_ be the greatest integer that is not greater than _magnitude_ ÷ 3.
+          1. Return _thousands_ × 3.
+        1. Else,
+          1. Assert: _notation_ is `"compact"`.
+          1. Let _exponent_ be an implementation-dependent integer by which to scale a number of the given magnitude in compact notation for the current locale.
+          1. Return _exponent_.
       </emu-alg>
     </emu-clause>
   </emu-clause>
@@ -657,7 +732,7 @@
 
       <ul>
         <li>The list that is the value of the `"nu"` field of any locale field of [[LocaleData]] must not include the values `"native"`, `"traditio"`, or `"finance"`.</li>
-        <li>[[LocaleData]][locale] must have a patterns field for all locale values. The value of this field must be a Record, which must have three fields: `"decimal"`, `"currency"`, and `"measureUnit"`. The two fields `"currency"` and `"measureUnit"` must be Records with at least one field, `"fallback"`. The `"currency"` may have additional fields with keys corresponding to currency codes according to <emu-xref href="#sec-currency-codes"></emu-xref>.  Each field of `"currency"` must be a Record with fields corresponding to the possible currencyDisplay values: `"code"`, `"symbol"`, `"narrowSymbol"`, and `"name"`.  Each of those fields must contain a Record with fields corresponding to the possible currencySignDisplay values: `"standard"` or `"accounting"`.  The `"measureUnit"` field (of [[LocaleData]][locale]) may have additional fields beyond the required field `"fallback"` with keys corresponding to measurement unit identifiers corresponding to <emu-xref href="#sec-measurement-unit-identifiers"></emu-xref>.  Each field of `"measureUnit"` must be a Record with fields corresponding to the possible unitDisplay values: `"narrow"`, `"short"`, and `"long"`.  All of the leaf fields (`"decimal"`, great-grandchildren of `"currency"`, and grandchildren of `"measureUnit"`) must be Records with fields corresponding to the possible signDisplay values: `"auto"`, `"always"`, `"never"`, and `"except-zero"`.  Each of these fields must be a Record with the keys `"positivePattern"`, `"zeroPattern"`, and `"negativePattern"`. The value of these fields must be string values that must contain the substring `"{number}"` and may contain the substrings `"{plusSign}"`, and `"{minusSign}"`; the values within the `"currency"` field must also contain one of the following substrings: `"{currencyCode}"`, `"{currencySymbol}"`, `"{currencyNarrowSymbol}"`, or `"{currencyName}"`; and the values within the `"measureUnit"` field must also contain one of the following substrings: `"{percentSign}"`, `"{measureUnitSymbol}"`, `"{measureUnitNarrowSymbol}"`, or `"{measureUnitName}"`. The pattern strings must not contain any characters in the General Category "Number, decimal digit" as specified by the Unicode Standard.</li>
+        <li>[[LocaleData]][locale] must have a patterns field for all locale values. The value of this field must be a Record, which must have three fields: `"decimal"`, `"currency"`, and `"measureUnit"`. The two fields `"currency"` and `"measureUnit"` must be Records with at least one field, `"fallback"`. The `"currency"` may have additional fields with keys corresponding to currency codes according to <emu-xref href="#sec-currency-codes"></emu-xref>.  Each field of `"currency"` must be a Record with fields corresponding to the possible currencyDisplay values: `"code"`, `"symbol"`, `"narrowSymbol"`, and `"name"`.  Each of those fields must contain a Record with fields corresponding to the possible currencySignDisplay values: `"standard"` or `"accounting"`.  The `"measureUnit"` field (of [[LocaleData]][locale]) may have additional fields beyond the required field `"fallback"` with keys corresponding to measurement unit identifiers corresponding to <emu-xref href="#sec-measurement-unit-identifiers"></emu-xref>.  Each field of `"measureUnit"` must be a Record with fields corresponding to the possible unitDisplay values: `"narrow"`, `"short"`, and `"long"`.  All of the leaf fields (`"decimal"`, great-grandchildren of `"currency"`, and grandchildren of `"measureUnit"`) must be Records with fields corresponding to the possible signDisplay values: `"auto"`, `"always"`, `"never"`, and `"except-zero"`.  Each of these fields must be a Record with the keys `"standard"`, `"scientific"`, `"compactShort"`, and `"compactLong"`.  Each of these fields must be a Record with the keys `"positivePattern"`, `"zeroPattern"`, and `"negativePattern"`. The value of these fields must be string values that must contain the substring `"{number}"` and may contain the substrings `"{plusSign}"`, `"{minusSign}"`, `"{compactSymbol}"`, `"{compactName}"`, `"{scientificSeparator}"`, and `"{scientificExponent}"`; the values within the `"currency"` field must also contain one of the following substrings: `"{currencyCode}"`, `"{currencySymbol}"`, `"{currencyNarrowSymbol}"`, or `"{currencyName}"`; and the values within the `"measureUnit"` field must also contain one of the following substrings: `"{percentSign}"`, `"{measureUnitSymbol}"`, `"{measureUnitNarrowSymbol}"`, or `"{measureUnitName}"`. The pattern strings must not contain any characters in the General Category "Number, decimal digit" as specified by the Unicode Standard.</li>
       </ul>
 
       <emu-note>
@@ -849,9 +924,9 @@
       <li>[[DataLocale]] is a String value with the language tag of the nearest locale for which the implementation has data to perform the formatting operation. It will be a parent locale of [[Locale]].</li>
       <li>[[NumberingSystem]] is a String value with the "type" given in Unicode Technical Standard 35 for the numbering system used for formatting.</li>
       <li>[[Style]] is one of the String values `"decimal"`, `"currency"`, `"percent"`, or `"unit"`. This value corresponds closely with the [[UnitType]] value.</li>
-      <li>[[UnitType]] is one of the String values `"none"`, `"currency"`, or `"measure-unit"`. The value `"measure-unit"` is used for both [[Style]] `"percent"` and `"unit"`.</li>
-      <li>[[MeasureUnit]] is a string corresponding to a CLDR unit identifier. It is only used with [[UnitType]] has the value `"measure-unit"`. The term "measure unit" is used for the purpose of the specification to distinguish between the unit type field and the manifestation of the unit type.</li>
-      <li>[[MeasureUnitDisplay]] is one of the String values `"short"`, `"narrow"`, or `"long"`, specifying whether to display the unit as a symbol, narrow symbol, or localized long name if formatting with the `"measure-unit"` unit type. It is only used with [[UnitType]] has the value `"measure-unit"`.</li>
+      <li>[[UnitType]] is one of the String values `"none"`, `"currency"`, or `"measureUnit"`. The value `"measureUnit"` is used for both [[Style]] `"percent"` and `"unit"`.</li>
+      <li>[[MeasureUnit]] is a string corresponding to a CLDR unit identifier. It is only used with [[UnitType]] has the value `"measureUnit"`. The term "measure unit" is used for the purpose of the specification to distinguish between the unit type field and the manifestation of the unit type.</li>
+      <li>[[MeasureUnitDisplay]] is one of the String values `"short"`, `"narrow"`, or `"long"`, specifying whether to display the unit as a symbol, narrow symbol, or localized long name if formatting with the `"measureUnit"` unit type. It is only used with [[UnitType]] has the value `"measureUnit"`.</li>
       <li>[[Currency]] is a String value with the currency code identifying the currency to be used if formatting with the `"currency"` unit type. It is only used when [[UnitType]] has the value `"currency"`.</li>
       <li>[[CurrencyDisplay]] is one of the String values `"code"`, `"symbol"`, `"narrowSymbol"`, or `"name"`, specifying whether to display the currency as an ISO 4217 alphabetic currency code, a localized currency symbol, or a localized currency name if formatting with the `"currency"` style. It is only used when [[UnitType]] has the value `"currency"`.</li>
       <li>[[CurrencySignDisplay]] is one of the String values `"standard"` or `"accounting"`, specifying whether to render negative numbers in accounting format, often signified by parenthesis. It is only used when [[UnitType]] has the value `"currency"` and when [[SignDisplay]] is not `"never"`.</li>
