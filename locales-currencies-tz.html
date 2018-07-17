@@ -1,8 +1,8 @@
 <emu-clause id="locales-currencies-tz">
-  <h1>Identification of Locales, Currencies, and Time Zones</h1>
+  <h1>Identification of Locales, Currencies, Time Zones, and Measurement Units</h1>
 
   <p>
-    This clause describes the String values used in the ECMAScript 2019 Internationalization API Specification to identify locales, currencies, and time zones.
+    This clause describes the String values used in the ECMAScript 2019 Internationalization API Specification to identify locales, currencies, time zones, and measurement units.
   </p>
 
   <emu-clause id="sec-case-sensitivity-and-case-mapping">
@@ -153,6 +153,35 @@
       <p>
         The DefaultTimeZone abstract operation returns a String value representing the valid (<emu-xref href="#sec-isvalidtimezonename"></emu-xref>) and canonicalized (<emu-xref href="#sec-canonicalizetimezonename"></emu-xref>) time zone name for the host environment's current time zone.
       </p>
+    </emu-clause>
+
+  </emu-clause>
+
+  <emu-clause id="sec-measurement-unit-identifiers">
+    <h1>Measurement Unit Identifiers</h1>
+
+    <p>
+      The ECMAScript 2019 Internationalization API Specification identifies measurement units using a unit identifier as defined by Unicode Technical Standard #35, Part 2, Section 6. Their canonical form is a string containing all lowercase letters with at least one hyphen.
+    </p>
+
+    <p>
+      All well-formed unit identifiers are allowed. However, the set of combinations of unit identifier and language tag for which localized names and symbols are available is implementation dependent. Where a localized name or symbol is not available, the unit identifier itself is used for formatting.
+    </p>
+
+    <emu-clause id="sec-iswellformedunitidentifier" aoid="IsWellFormedUnitIdentifier">
+      <h1>IsWellFormedUnitIdentifier ( _unitIdentifier_ )</h1>
+
+      <p>
+        The IsWellFormedUnitIdentifier abstract operation verifies that the _unitIdentifier_ argument (which must be a String value) represents a well-formed UTS #35 unit identifier. The following steps are taken:
+      </p>
+
+      <emu-alg>
+        1. If _unitIdentifier_ contains any character that is not in the range `"a"` to `"z"` (U+0061 to U+007A) and is not `"-"` (U+002D), return *false*.
+        1. If _unitIdentifier_ begins or ends with `"-"`, return *false*.
+        1. If _unitIdentifier_ contains zero instances of `"-"`, return *false*.
+        1. If _unitIdentifier_ contains two `"-"` characters directly adjacent to one another, return *false*.
+        1. Return *true*.
+      </emu-alg>
     </emu-clause>
 
   </emu-clause>
