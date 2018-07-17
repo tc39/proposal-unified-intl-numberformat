@@ -36,7 +36,7 @@ In addition, one missing option is added to the existing `currencyDisplay` setti
 // ==> "$100" (rather than "US$100")
 ```
 
-## II. Measure Units
+## II. Units
 
 Units of measurement can be formatted as follows:
 
@@ -53,7 +53,7 @@ The syntax was discussed in #3.
 
 - `style` receives the string value "unit"
 - `unit` receives a string measure unit identifier, defined in [UTS #35](http://unicode.org/reports/tr35/tr35-general.html#Unit_Elements).  See also the [full list of unit identifiers](https://unicode.org/repos/cldr/tags/latest/common/validity/unit.xml).
-    - Note: this list is not "arbitrary generative"; this is the shape of the data we have.
+    - Note: currently this is restricted to single units as listed in the CLDR specification.  If there is sufficient demand, a future proposal could add ways to combine units, such as compound units.  Note that certain compound units, such as "meters per second", are already available as standalone units in CLDR.
 - `unitDisplay`, named after the corresponding setting for currencies, `currencyDisplay`, takes either "narrow", "short", or "long".
 
 ## III. Scientific and Compact Notation
@@ -109,12 +109,11 @@ The sign can be displayed on positive numbers:
 // ==> +55
 ```
 
-Currency accounting sign display is also supported via a new option. In many
-locales, accounting format means to wrap the number with parentheses instead of
+Currency accounting sign display is also supported via a new option. In many locales, accounting format means to wrap the number with parentheses instead of
 appending a minus sign.  For example:
 
 ```javascript
-(-55).toLocaleString("bn", {
+(-100).toLocaleString("bn", {
     style: "currency",
     currency: "EUR",
     currencySignDisplay: "accounting"
@@ -122,12 +121,14 @@ appending a minus sign.  For example:
 // ==> (১০০.০০€)
 ```
 
-The syntax was discussed in #6.
+The syntax was discussed in #6:
 
 - `signDisplay`: "auto" (default), "always", "never", "except-zero"
+  - See examples below.
 - `currencySignDisplay`: "standard" (default), "accounting"
+  - "accounting" enables the accounting format on currency values, as shown in the example above.  "standard", the default value, disables accounting formats.
 
-Examples of signDisplay choices:
+Examples of signDisplay choices with Latin digits:
 
 signDisplay | -1  | 0   | 1
 ----------- | --- | --- | ---
