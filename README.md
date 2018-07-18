@@ -6,6 +6,7 @@ Intl.NumberFormat Unified API Proposal
 There are many requests for adding number-formatting-related features to ECMA-402 (the JavaScript Intl standard library). These include:
 
 - [Expose narrow currency symbol](https://github.com/tc39/ecma402/issues/200) -- Section I
+- [Clarification on behavior of SetNumberFormatDigitOptions](https://github.com/tc39/ecma402/issues/244) -- Section I
 - [Add measure unit formatting](https://github.com/tc39/ecma402/issues/32) -- Section II
 - [Add compact decimal notation](https://github.com/tc39/ecma402/issues/37) -- Section III
 - [Add scientific notation](https://github.com/tc39/ecma402/issues/164) -- Section III
