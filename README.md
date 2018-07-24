@@ -118,7 +118,7 @@ appending a minus sign.  For example:
 (-100).toLocaleString("bn", {
     style: "currency",
     currency: "EUR",
-    currencySignDisplay: "accounting"
+    currencySign: "accounting"
 });
 // ==> (১০০.০০€)
 ```
@@ -127,7 +127,7 @@ The syntax was discussed in #6:
 
 - `signDisplay`: "auto" (default), "always", "never", "except-zero"
   - See examples below.
-- `currencySignDisplay`: "standard" (default), "accounting"
+- `currencySign`: "standard" (default), "accounting"
   - "accounting" enables the accounting format on currency values, as shown in the example above.  "standard", the default value, disables accounting formats.
 
 Examples of signDisplay choices with Latin digits:
