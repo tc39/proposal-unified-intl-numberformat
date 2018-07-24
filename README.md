@@ -1,6 +1,8 @@
 Intl.NumberFormat Unified API Proposal
 ======================================
 
+[TC39 Stage 2 Proposal](https://docs.google.com/presentation/d/1_1D15PWniTlbLu1BOU9aDf5H87Ecq85i0CuLl5KA4DE/edit?usp=sharing)
+
 ## Background / Motivation
 
 There are many requests for adding number-formatting-related features to ECMA-402 (the JavaScript Intl standard library). These include:
