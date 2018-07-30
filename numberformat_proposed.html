@@ -602,7 +602,7 @@
         The abstract operation ComputeExponent computes an exponent (power of ten) by which to scale _x_ according to the number formatting settings.  It handles cases such as 999 rounding up to 1000, requiring a different exponent.
       </p>
       <emu-alg>
-        1. If _x_ is 0, then
+        1. If _x_ == 0, then
           1. Return 0.
         1. If _x_ &lt; 0, then
           1. Let _x_ = -_x_.
