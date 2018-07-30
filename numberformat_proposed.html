@@ -586,7 +586,7 @@
             1. Assert: _compactDisplay_ is `"long"`.
             1. Let _displayNotation_ be `"compactLong"`.
         1. Let _patterns_ be _patterns_.[[&lt;_displayNotation_&gt;]].
-        1. If _x_ is not *NaN* and _x_ < 0, then
+        1. If _x_ is not *NaN* and _x_ &lt; 0 or _x_ is *-0*, then
           1. Let _pattern_ be _patterns_.[[negativePattern]].
         1. Else If _x_ is 0, then
           1. Let _pattern_ be _patterns_.[[zeroPattern]].
