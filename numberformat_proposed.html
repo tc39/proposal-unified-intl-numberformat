@@ -602,7 +602,7 @@
         The abstract operation ComputeExponent computes an exponent (power of ten) by which to scale _x_ according to the number formatting settings.  It handles cases such as 999 rounding up to 1000, requiring a different exponent.
       </p>
       <emu-alg>
-        1. If _x_ == 0, then
+        1. If _x_ = 0, then
           1. Return 0.
         1. If _x_ &lt; 0, then
           1. Let _x_ = -_x_.
@@ -610,7 +610,7 @@
         1. Let _exponent_ be ComputeExponentForMagnitude(_numberFormat_, _magnitude_).
         1. Let _x_ be _x_ × 10<sup>-_exponent_</sup>.
         1. Let _formatNumberResult_ be FormatNumberToString(_numberFormat_, _x_).
-        1. If _formatNumberResult_.[[RoundedNumber]] == 0, then
+        1. If _formatNumberResult_.[[RoundedNumber]] = 0, then
           1. Return _exponent_.
         1. Let _newMagnitude_ be the greatest integer that is not greater than the base 10 logarithm of _x_.
         1. If _newMagnitude_ is _magnitude_ – _exponent_, then
