@@ -172,7 +172,7 @@
       <h1>IsWellFormedUnitIdentifier ( _unitIdentifier_ )</h1>
 
       <p>
-        The IsWellFormedUnitIdentifier abstract operation verifies that the _unitIdentifier_ argument (which must be a String value) represents a well-formed UTS #35 unit identifier. The following steps are taken:
+        The IsWellFormedUnitIdentifier abstract operation verifies that the _unitIdentifier_ argument (which must be a String value) represents a well-formed unit identifier as defined in UTS #35, Part 2, Section 6. In addition to obeying the UTS #35 unit identifier syntax, _unitIdentifier_ must be one of the identifiers anointed in the Validity Data as described in UTS #35, Part 1, Section 3.11; the list may change over time. The following steps are taken:
       </p>
 
       <emu-alg>
@@ -180,6 +180,147 @@
         1. If _unitIdentifier_ begins or ends with `"-"`, return *false*.
         1. If _unitIdentifier_ contains zero instances of `"-"`, return *false*.
         1. If _unitIdentifier_ contains two `"-"` characters directly adjacent to one another, return *false*.
+        1. If _unitIdentifier_ is not in the following list, return *false*.
+        <ul>
+          <li>acceleration-g-force</li>
+          <li>acceleration-meter-per-second-squared</li>
+          <li>angle-arc-minute</li>
+          <li>angle-arc-second</li>
+          <li>angle-degree</li>
+          <li>angle-radian</li>
+          <li>angle-revolution</li>
+          <li>area-acre</li>
+          <li>area-hectare</li>
+          <li>area-square-centimeter</li>
+          <li>area-square-foot</li>
+          <li>area-square-inch</li>
+          <li>area-square-kilometer</li>
+          <li>area-square-meter</li>
+          <li>area-square-mile</li>
+          <li>area-square-yard</li>
+          <li>concentr-karat</li>
+          <li>concentr-milligram-per-deciliter</li>
+          <li>concentr-millimole-per-liter</li>
+          <li>concentr-part-per-million</li>
+          <li>consumption-liter-per-100kilometers</li>
+          <li>consumption-liter-per-kilometer</li>
+          <li>consumption-mile-per-gallon</li>
+          <li>consumption-mile-per-gallon-imperial</li>
+          <li>digital-bit</li>
+          <li>digital-byte</li>
+          <li>digital-gigabit</li>
+          <li>digital-gigabyte</li>
+          <li>digital-kilobit</li>
+          <li>digital-kilobyte</li>
+          <li>digital-megabit</li>
+          <li>digital-megabyte</li>
+          <li>digital-terabit</li>
+          <li>digital-terabyte</li>
+          <li>duration-century</li>
+          <li>duration-day</li>
+          <li>duration-day-person</li>
+          <li>duration-hour</li>
+          <li>duration-microsecond</li>
+          <li>duration-millisecond</li>
+          <li>duration-minute</li>
+          <li>duration-month</li>
+          <li>duration-month-person</li>
+          <li>duration-nanosecond</li>
+          <li>duration-second</li>
+          <li>duration-week</li>
+          <li>duration-week-person</li>
+          <li>duration-year</li>
+          <li>duration-year-person</li>
+          <li>electric-ampere</li>
+          <li>electric-milliampere</li>
+          <li>electric-ohm</li>
+          <li>electric-volt</li>
+          <li>energy-calorie</li>
+          <li>energy-foodcalorie</li>
+          <li>energy-joule</li>
+          <li>energy-kilocalorie</li>
+          <li>energy-kilojoule</li>
+          <li>energy-kilowatt-hour</li>
+          <li>frequency-gigahertz</li>
+          <li>frequency-hertz</li>
+          <li>frequency-kilohertz</li>
+          <li>frequency-megahertz</li>
+          <li>length-astronomical-unit</li>
+          <li>length-centimeter</li>
+          <li>length-decimeter</li>
+          <li>length-fathom</li>
+          <li>length-foot</li>
+          <li>length-furlong</li>
+          <li>length-inch</li>
+          <li>length-kilometer</li>
+          <li>length-light-year</li>
+          <li>length-meter</li>
+          <li>length-micrometer</li>
+          <li>length-mile</li>
+          <li>length-mile-scandinavian</li>
+          <li>length-millimeter</li>
+          <li>length-nanometer</li>
+          <li>length-nautical-mile</li>
+          <li>length-parsec</li>
+          <li>length-picometer</li>
+          <li>length-yard</li>
+          <li>light-lux</li>
+          <li>mass-carat</li>
+          <li>mass-gram</li>
+          <li>mass-kilogram</li>
+          <li>mass-metric-ton</li>
+          <li>mass-microgram</li>
+          <li>mass-milligram</li>
+          <li>mass-ounce</li>
+          <li>mass-ounce-troy</li>
+          <li>mass-pound</li>
+          <li>mass-stone</li>
+          <li>mass-ton</li>
+          <li>power-gigawatt</li>
+          <li>power-horsepower</li>
+          <li>power-kilowatt</li>
+          <li>power-megawatt</li>
+          <li>power-milliwatt</li>
+          <li>power-watt</li>
+          <li>pressure-hectopascal</li>
+          <li>pressure-inch-hg</li>
+          <li>pressure-millibar</li>
+          <li>pressure-millimeter-of-mercury</li>
+          <li>pressure-pound-per-square-inch</li>
+          <li>speed-kilometer-per-hour</li>
+          <li>speed-knot</li>
+          <li>speed-meter-per-second</li>
+          <li>speed-mile-per-hour</li>
+          <li>temperature-celsius</li>
+          <li>temperature-fahrenheit</li>
+          <li>temperature-generic</li>
+          <li>temperature-kelvin</li>
+          <li>volume-acre-foot</li>
+          <li>volume-bushel</li>
+          <li>volume-centiliter</li>
+          <li>volume-cubic-centimeter</li>
+          <li>volume-cubic-foot</li>
+          <li>volume-cubic-inch</li>
+          <li>volume-cubic-kilometer</li>
+          <li>volume-cubic-meter</li>
+          <li>volume-cubic-mile</li>
+          <li>volume-cubic-yard</li>
+          <li>volume-cup</li>
+          <li>volume-cup-metric</li>
+          <li>volume-deciliter</li>
+          <li>volume-fluid-ounce</li>
+          <li>volume-gallon</li>
+          <li>volume-gallon-imperial</li>
+          <li>volume-hectoliter</li>
+          <li>volume-liter</li>
+          <li>volume-megaliter</li>
+          <li>volume-milliliter</li>
+          <li>volume-pint</li>
+          <li>volume-pint-metric</li>
+          <li>volume-quart</li>
+          <li>volume-tablespoon</li>
+          <li>volume-teaspoon</li>
+        </ul>
         1. Return *true*.
       </emu-alg>
     </emu-clause>
