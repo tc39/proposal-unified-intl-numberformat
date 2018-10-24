@@ -3,7 +3,9 @@
   "name": "template-for-proposals",
   "description": "A repository template for ECMAScript proposals.",
   "scripts": {
-    "build": "ecmarkup spec.emu > index.html"
+    "build:sec6": "ecmarkup locales-currencies-tz.html locales-currencies-tz_out.html",
+    "build:sec11": "ecmarkup numberformat_proposed.html numberformat_proposed_out.html",
+    "build": "npm run build:sec6 && npm run build:sec11"
   },
   "homepage": "https://github.com/tc39/template-for-proposals#readme",
   "repository": {
