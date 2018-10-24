@@ -13,8 +13,8 @@
       <emu-alg>
         1. Assert: Type(_intlObj_) is Object.
         1. Assert: Type(_options_) is Object.
-        1. Assert: type(_mnfdDefault_) is Number.
-        1. Assert: type(_mxfdDefault_) is Number.
+        1. Assert: Type(_mnfdDefault_) is Number.
+        1. Assert: Type(_mxfdDefault_) is Number.
         1. Let _mnid_ be ? GetNumberOption(_options_, `"minimumIntegerDigits,"`, 1, 21, 1).
         1. Let _mnfd_ be ? GetNumberOption(_options_, `"minimumFractionDigits"`, 0, 20, _mnfdDefault_).
         1. Let _mxfdActualDefault_ be max( _mnfd_, _mxfdDefault_ ).
@@ -25,13 +25,13 @@
           1. Set _intlObj_.[[RoundingType]] to `"significantDigits"`
           1. Let _mnsd_ be ? DefaultNumberOption(_mnsd_, 1, 21, 1).
           1. Let _mxsd_ be ? DefaultNumberOption(_mxsd_, _mnsd_, 21, 21).
-          1. Set _intlObj_.[[MinimumSignificantDigits]] to mnsd.
-          1. Set _intlObj_.[[MaximumSignificantDigits]] to mxsd.
+          1. Set _intlObj_.[[MinimumSignificantDigits]] to _mnsd_.
+          1. Set _intlObj_.[[MaximumSignificantDigits]] to _mxsd_.
         1. Else,
           1. Set _intlObj_.[[RoundingType]] to `"fractionDigits"`
-          1. Set _intlObj_.[[MinimumIntegerDigits]] to mnid.
-          1. Set _intlObj_.[[MinimumFractionDigits]] to mnfd.
-          1. Set _intlObj_.[[MaximumFractionDigits]] to mxfd.
+          1. Set _intlObj_.[[MinimumIntegerDigits]] to _mnid_.
+          1. Set _intlObj_.[[MinimumFractionDigits]] to _mnfd_.
+          1. Set _intlObj_.[[MaximumFractionDigits]] to _mxfd_.
       </emu-alg>
     </emu-clause>
 
@@ -71,7 +71,7 @@
         1. Perform ? SetNumberFormatDigitOptions(_numberFormat_, _options_, _mnfdDefault_, _mxfdDefault_).
         1. Let _notation_ be ? GetOption(_options_, `"notation"`, `"string"`, &laquo; `"standard"`, `"scientific"`, `"engineering"`, `"compact"` &raquo;, `"standard"`).
         1. Set _numberFormat_.[[Notation]] to _notation_.
-        1. Let _compactDisplay_ be ? GetOption(_options_, `"_compactDisplay_"`, `"string"`, &laquo; `"short"`, `"long"` &raquo;, `"short"`).
+        1. Let _compactDisplay_ be ? GetOption(_options_, `"compactDisplay"`, `"string"`, &laquo; `"short"`, `"long"` &raquo;, `"short"`).
         1. Set _numberFormat_.[[CompactDisplay]] to _compactDisplay_.
         1. Let _useGrouping_ be ? GetOption(_options_, `"useGrouping"`, `"boolean"`, *undefined*, *true*).
         1. Set _numberFormat_.[[UseGrouping]] to _useGrouping_.
@@ -126,7 +126,7 @@
         1. If _intlObject_.[[MinimumSignificantDigits]] and _intlObject_.[[MaximumSignificantDigits]] are both not *undefined*, then
           1. Let _result_ be ToRawPrecision(_x_, _intlObject_.[[MinimumSignificantDigits]], _intlObject_.[[MaximumSignificantDigits]]).
         1. Else,
-          1. Let _result be ToRawFixed(_x_, _intlObject_.[[MinimumIntegerDigits]], _intlObject_.[[MinimumFractionDigits]], _intlObject_.[[MaximumFractionDigits]]).
+          1. Let _result_ be ToRawFixed(_x_, _intlObject_.[[MinimumIntegerDigits]], _intlObject_.[[MinimumFractionDigits]], _intlObject_.[[MaximumFractionDigits]]).
         1. If _isNegative_, then
           1. Let _result_.[[RoundedNumber]] be -_result_.[[RoundedNumber]].
         1. Return _result_.
@@ -217,7 +217,7 @@
             1. If _exponent_ &lt; 0, then
               1. Let _minusSignSymbol_ be the ILND String representing the minus sign.
               1. Append a new Record { [[Type]]: `"minusSign"`, [[Value]]: _minusSignSymbol_ } as the last element of _result_.
-              1. Let _exponent_ be -_multiplier.
+              1. Let _exponent_ be -_exponent_.
             1. Let _exponentResult_ be ToRawFixed(_exponent_, 1, 0, 0).
             1. Append a new Record { [[Type]]: `"exponent"`, [[Value]]: _exponentResult_.[[FormattedString]] } as the last element of _result_.
           1. Else if _p_ is equal `"percentSign"`, then
@@ -580,7 +580,7 @@
         1. Else If _exponent_ is not 0, then
           1. Assert: _notation_ is `"compact"`.
           1. Let _compactDisplay_ be _numberFormat_.[[CompactDisplay]].
-          1. If _compactDisplay is `"short"`, then
+          1. If _compactDisplay_ is `"short"`, then
             1. Let _displayNotation_ be `"compactShort"`.
           1. Else,
             1. Assert: _compactDisplay_ is `"long"`.
@@ -619,7 +619,7 @@
       </emu-alg>
     </emu-clause>
 
-    <emu-clause id="sec-computeexponent" aoid="ComputeExponent">
+    <emu-clause id="sec-computeexponentformagnitude" aoid="ComputeExponentForMagnitude">
       <h1>ComputeExponentForMagnitude ( _numberFormat_, _magnitude_ )</h1>
       <p>
         The abstract operation ComputeExponentHelper computes an exponent by which to scale a number of the given magnitude (power of ten of the most significant digit) according to the locale and the desired notation (scientific, engineering, or compact).
