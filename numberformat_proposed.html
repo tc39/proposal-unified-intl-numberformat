@@ -223,17 +223,17 @@
           1. Else if _p_ is equal `"percentSign"`, then
             1. Let _percentSignSymbol_ be the ILND String representing the percent sign.
             1. Append a new Record { [[Type]]: `"percentSign"`, [[Value]]: _percentSignSymbol_ } as the last element of _result_.
-          1. Else if _p_ is equal `"measureUnitSymbol"` and _numberFormat_.[[UnitType]] is `"unit"`, then
+          1. Else if _p_ is equal `"measureUnitSymbol"` and _numberFormat_.[[UnitType]] is `"measureUnit"`, then
             1. Let _measureUnit_ be _numberFormat_.[[MeasureUnit]].
-            1. Let _mu_ be an ILD string representing _measureUnit_ in short form, which may depend on _x_ in languages having different plural forms. If the implementation does not have such a representation of _currency_, use _measureUnit_ itself.
+            1. Let _mu_ be an ILD string representing _measureUnit_ in short form, which may depend on _x_ in languages having different plural forms. If the implementation does not have such a representation of _measureUnit_, use _measureUnit_ itself.
             1. Append a new Record { [[Type]]: `"unit"`, [[Value]]: _mu_ } as the last element of _result_.
-          1. Else if _p_ is equal `"measureUnitNarrowSymbol"` and _numberFormat_.[[UnitType]] is `"currency"`, then
+          1. Else if _p_ is equal `"measureUnitNarrowSymbol"` and _numberFormat_.[[UnitType]] is `"measureUnit"`, then
             1. Let _measureUnit_ be _numberFormat_.[[MeasureUnit]].
-            1. Let _mu_ be an ILD string representing _measureUnit_ in narrow form, which may depend on _x_ in languages having different plural forms. If the implementation does not have such a representation of _currency_, use _measureUnit_ itself.
+            1. Let _mu_ be an ILD string representing _measureUnit_ in narrow form, which may depend on _x_ in languages having different plural forms. If the implementation does not have such a representation of _measureUnit_, use _measureUnit_ itself.
             1. Append a new Record { [[Type]]: `"unit"`, [[Value]]: _mu_ } as the last element of _result_.
-          1. Else if _p_ is equal `"measureUnitName"` and _numberFormat_.[[UnitType]] is `"currency"`, then
+          1. Else if _p_ is equal `"measureUnitName"` and _numberFormat_.[[UnitType]] is `"measureUnit"`, then
             1. Let _measureUnit_ be _numberFormat_.[[MeasureUnit]].
-            1. Let _mu_ be an ILD string representing _measureUnit_ in long form, which may depend on _x_ in languages having different plural forms. If the implementation does not have such a representation of _currency_, use _measureUnit_ itself.
+            1. Let _mu_ be an ILD string representing _measureUnit_ in long form, which may depend on _x_ in languages having different plural forms. If the implementation does not have such a representation of _measureUnit_, use _measureUnit_ itself.
             1. Append a new Record { [[Type]]: `"unit"`, [[Value]]: _mu_ } as the last element of _result_.
           1. Else if _p_ is equal `"currencyCode"` and _numberFormat_.[[UnitType]] is `"currency"`, then
             1. Let _currency_ be _numberFormat_.[[Currency]].
