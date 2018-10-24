@@ -236,10 +236,10 @@
           1. Else if _p_ is equal `"scientificExponent"`, then
             1. If _exponent_ &lt; 0, then
               1. Let _minusSignSymbol_ be the ILND String representing the minus sign.
-              1. Append a new Record { [[Type]]: `"minusSign"`, [[Value]]: _minusSignSymbol_ } as the last element of _result_.
+              1. Append a new Record { [[Type]]: `"exponentMinusSign"`, [[Value]]: _minusSignSymbol_ } as the last element of _result_.
               1. Let _exponent_ be -_exponent_.
             1. Let _exponentResult_ be ToRawFixed(_exponent_, 1, 0, 0).
-            1. Append a new Record { [[Type]]: `"exponent"`, [[Value]]: _exponentResult_.[[FormattedString]] } as the last element of _result_.
+            1. Append a new Record { [[Type]]: `"exponentInteger"`, [[Value]]: _exponentResult_.[[FormattedString]] } as the last element of _result_.
           1. Else if _p_ is equal `"percentSign"`, then
             1. Let _percentSignSymbol_ be the ILND String representing the percent sign.
             1. Append a new Record { [[Type]]: `"percentSign"`, [[Value]]: _percentSignSymbol_ } as the last element of _result_.
