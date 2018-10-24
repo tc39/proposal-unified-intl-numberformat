@@ -29,9 +29,9 @@
           1. Set _intlObj_.[[MaximumSignificantDigits]] to _mxsd_.
         1. Else,
           1. Set _intlObj_.[[RoundingType]] to `"fractionDigits"`
-          1. Set _intlObj_.[[MinimumIntegerDigits]] to _mnid_.
           1. Set _intlObj_.[[MinimumFractionDigits]] to _mnfd_.
           1. Set _intlObj_.[[MaximumFractionDigits]] to _mxfd_.
+        1. Set _intlObj_.[[MinimumIntegerDigits]] to _mnid_.
       </emu-alg>
     </emu-clause>
 
@@ -133,6 +133,7 @@
           1. Let _forwardZeros_ be the String consisting of _minInteger_–_intCount_ occurrences of the character `"0"`.
           1. Let _oldString_ be _result_.[[FormattedString]].
           1. Let _result_.[[FormattedString]] be the concatenation of Strings _forwardZeros_ and _oldString_.
+        1. Delete _result_.[[IntegerDigitsCount]].
         1. If _isNegative_, then
           1. Let _result_.[[RoundedNumber]] be -_result_.[[RoundedNumber]].
         1. Return _result_.
