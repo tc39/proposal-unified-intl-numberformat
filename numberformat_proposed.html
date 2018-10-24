@@ -523,7 +523,7 @@
         1. Let _currencyDisplay_ be ? GetOption(_options_, `"currencyDisplay"`, `"string"`, &laquo; `"code"`, `"symbol"`, `"narrowSymbol"`, `"name"` &raquo;, `"symbol"`).
         1. Let _unit_ be ? GetOption(_options_, `"unit"`, `"string"`, *undefined*, *undefined*).
         1. Let _unitDisplay_ be ? GetOption(_options_, `"unitDisplay"`, `"string"`, &laquo; `"short"`, `"narrow"`, `"long"` &raquo;, `"short"`).
-        1. Let _currencySignDisplay_ be ? GetOption(_options_, `"currencySignDisplay"`, `"string"`, &laquo; `"standard"`, `"accounting"` &raquo;, `"standard"`).
+        1. Let _currencySign_ be ? GetOption(_options_, `"currencySign"`, `"string"`, &laquo; `"standard"`, `"accounting"` &raquo;, `"standard"`).
         1. If _style_ is `"decimal"`, then
           1. Set _intlObj_.[[UnitType]] to `"none"`.
         1. If _style_ is `"currency"`, then
@@ -533,7 +533,7 @@
           1. Set _intlObj_.[[UnitType]] to `"currency"`.
           1. Set _intlObj_.[[Currency]] to _currency_.
           1. Set _intlObj_.[[CurrencyDisplay]] to _currencyDisplay_.
-          1. Set _intlObj_.[[CurrencySignDisplay]] to _currencySignDisplay_.
+          1. Set _intlObj_.[[CurrencySign]] to _currencySign_.
         1. If _style_ is `"percent"`, then
           1. Let _unit_ be `"concentr-percent"`.
         1. If _style_ is `"unit"` or _style_ is `"percent"`, then
@@ -568,12 +568,12 @@
         1. Else If _unitType_ is `"currency"`, then
           1. Let _currency_ be _numberFormat_.[[Currency]].
           1. Let _currencyDisplay_ be _numberFormat_.[[CurrencyDisplay]].
-          1. Let _currencySignDisplay_ be _numberFormat_.[[CurrencySignDisplay]].
+          1. Let _currencySign_ be _numberFormat_.[[CurrencySign]].
           1. If _patterns_.[[&lt;_currency_&gt;]] is *undefined*, then
             1. Let _currency_ be `"fallback"`.
           1. Let _patterns_ be _patterns_.[[&lt;_currency_&gt;]].
           1. Let _patterns_ be _patterns_.[[&lt;_currencyDisplay_&gt;]].
-          1. Let _patterns_ be _patterns_.[[&lt;_currencySignDisplay_&gt;]].
+          1. Let _patterns_ be _patterns_.[[&lt;_currencySign_&gt;]].
         1. Else,
           1. Assert: _unitType_ is `"none"`.
           1. Let _patterns_ be _patterns_.[[`"decimal"`]].
@@ -663,7 +663,7 @@
 
       <emu-alg>
         1. If NewTarget is *undefined*, let _newTarget_ be the active function object, else let _newTarget_ be NewTarget.
-        1. Let _numberFormat_ be ? OrdinaryCreateFromConstructor(_newTarget_, `"%NumberFormatPrototype%"`, &laquo; [[InitializedNumberFormat]], [[Locale]], [[DataLocale]], [[NumberingSystem]], [[Style]], [[UnitType]], [[MeasureUnit]], [[MeasureUnitDisplay]], [[Currency]], [[CurrencyDisplay]], [[CurrencySignDisplay]], [[MinimumIntegerDigits]], [[MinimumFractionDigits]], [[MaximumFractionDigits]], [[MinimumSignificantDigits]], [[MaximumSignificantDigits]], [[Notation]], [[CompactDisplay]], [[UseGrouping]], [[SignDisplay]], [[BoundFormat]] &raquo;).
+        1. Let _numberFormat_ be ? OrdinaryCreateFromConstructor(_newTarget_, `"%NumberFormatPrototype%"`, &laquo; [[InitializedNumberFormat]], [[Locale]], [[DataLocale]], [[NumberingSystem]], [[Style]], [[UnitType]], [[MeasureUnit]], [[MeasureUnitDisplay]], [[Currency]], [[CurrencyDisplay]], [[CurrencySign]], [[MinimumIntegerDigits]], [[MinimumFractionDigits]], [[MaximumFractionDigits]], [[MinimumSignificantDigits]], [[MaximumSignificantDigits]], [[Notation]], [[CompactDisplay]], [[UseGrouping]], [[SignDisplay]], [[BoundFormat]] &raquo;).
         1. Perform ? InitializeNumberFormat(_numberFormat_, _locales_, _options_).
       </emu-alg>
       <emu-normative-optional>
@@ -738,7 +738,7 @@
 
       <ul>
         <li>The list that is the value of the `"nu"` field of any locale field of [[LocaleData]] must not include the values `"native"`, `"traditio"`, or `"finance"`.</li>
-        <li>[[LocaleData]][locale] must have a patterns field for all locale values. The value of this field must be a Record, which must have three fields: `"decimal"`, `"currency"`, and `"measureUnit"`. The two fields `"currency"` and `"measureUnit"` must be Records with at least one field, `"fallback"`. The `"currency"` may have additional fields with keys corresponding to currency codes according to <emu-xref href="#sec-currency-codes"></emu-xref>.  Each field of `"currency"` must be a Record with fields corresponding to the possible currencyDisplay values: `"code"`, `"symbol"`, `"narrowSymbol"`, and `"name"`.  Each of those fields must contain a Record with fields corresponding to the possible currencySignDisplay values: `"standard"` or `"accounting"`.  The `"measureUnit"` field (of [[LocaleData]][locale]) may have additional fields beyond the required field `"fallback"` with keys corresponding to measurement unit identifiers corresponding to <emu-xref href="#sec-measurement-unit-identifiers"></emu-xref>.  Each field of `"measureUnit"` must be a Record with fields corresponding to the possible unitDisplay values: `"narrow"`, `"short"`, and `"long"`.  All of the leaf fields (`"decimal"`, great-grandchildren of `"currency"`, and grandchildren of `"measureUnit"`) must be Records with fields corresponding to the possible signDisplay values: `"auto"`, `"always"`, `"never"`, and `"except-zero"`.  Each of these fields must be a Record with the keys `"standard"`, `"scientific"`, `"compactShort"`, and `"compactLong"`.  Each of these fields must be a Record with the keys `"positivePattern"`, `"zeroPattern"`, and `"negativePattern"`. The value of these fields must be string values that must contain the substring `"{number}"` and may contain the substrings `"{plusSign}"`, `"{minusSign}"`, `"{compactSymbol}"`, `"{compactName}"`, `"{scientificSeparator}"`, and `"{scientificExponent}"`; the values within the `"currency"` field must also contain one of the following substrings: `"{currencyCode}"`, `"{currencySymbol}"`, `"{currencyNarrowSymbol}"`, or `"{currencyName}"`; and the values within the `"measureUnit"` field must also contain one of the following substrings: `"{percentSign}"`, `"{measureUnitSymbol}"`, `"{measureUnitNarrowSymbol}"`, or `"{measureUnitName}"`. The pattern strings must not contain any characters in the General Category "Number, decimal digit" as specified by the Unicode Standard.</li>
+        <li>[[LocaleData]][locale] must have a patterns field for all locale values. The value of this field must be a Record, which must have three fields: `"decimal"`, `"currency"`, and `"measureUnit"`. The two fields `"currency"` and `"measureUnit"` must be Records with at least one field, `"fallback"`. The `"currency"` may have additional fields with keys corresponding to currency codes according to <emu-xref href="#sec-currency-codes"></emu-xref>.  Each field of `"currency"` must be a Record with fields corresponding to the possible currencyDisplay values: `"code"`, `"symbol"`, `"narrowSymbol"`, and `"name"`.  Each of those fields must contain a Record with fields corresponding to the possible currencySign values: `"standard"` or `"accounting"`.  The `"measureUnit"` field (of [[LocaleData]][locale]) may have additional fields beyond the required field `"fallback"` with keys corresponding to measurement unit identifiers corresponding to <emu-xref href="#sec-measurement-unit-identifiers"></emu-xref>.  Each field of `"measureUnit"` must be a Record with fields corresponding to the possible unitDisplay values: `"narrow"`, `"short"`, and `"long"`.  All of the leaf fields (`"decimal"`, great-grandchildren of `"currency"`, and grandchildren of `"measureUnit"`) must be Records with fields corresponding to the possible signDisplay values: `"auto"`, `"always"`, `"never"`, and `"except-zero"`.  Each of these fields must be a Record with the keys `"standard"`, `"scientific"`, `"compactShort"`, and `"compactLong"`.  Each of these fields must be a Record with the keys `"positivePattern"`, `"zeroPattern"`, and `"negativePattern"`. The value of these fields must be string values that must contain the substring `"{number}"` and may contain the substrings `"{plusSign}"`, `"{minusSign}"`, `"{compactSymbol}"`, `"{compactName}"`, `"{scientificSeparator}"`, and `"{scientificExponent}"`; the values within the `"currency"` field must also contain one of the following substrings: `"{currencyCode}"`, `"{currencySymbol}"`, `"{currencyNarrowSymbol}"`, or `"{currencyName}"`; and the values within the `"measureUnit"` field must also contain one of the following substrings: `"{percentSign}"`, `"{measureUnitSymbol}"`, `"{measureUnitNarrowSymbol}"`, or `"{measureUnitName}"`. The pattern strings must not contain any characters in the General Category "Number, decimal digit" as specified by the Unicode Standard.</li>
       </ul>
 
       <emu-note>
@@ -866,8 +866,8 @@
             <td>`"currencyDisplay"`</td>
           </tr>
           <tr>
-            <td>[[CurrencySignDisplay]]</td>
-            <td>`"currencySignDisplay"`</td>
+            <td>[[CurrencySign]]</td>
+            <td>`"currencySign"`</td>
           </tr>
           <tr>
             <td>[[MinimumIntegerDigits]]</td>
@@ -935,7 +935,7 @@
       <li>[[MeasureUnitDisplay]] is one of the String values `"short"`, `"narrow"`, or `"long"`, specifying whether to display the unit as a symbol, narrow symbol, or localized long name if formatting with the `"measureUnit"` unit type. It is only used with [[UnitType]] has the value `"measureUnit"`.</li>
       <li>[[Currency]] is a String value with the currency code identifying the currency to be used if formatting with the `"currency"` unit type. It is only used when [[UnitType]] has the value `"currency"`.</li>
       <li>[[CurrencyDisplay]] is one of the String values `"code"`, `"symbol"`, `"narrowSymbol"`, or `"name"`, specifying whether to display the currency as an ISO 4217 alphabetic currency code, a localized currency symbol, or a localized currency name if formatting with the `"currency"` style. It is only used when [[UnitType]] has the value `"currency"`.</li>
-      <li>[[CurrencySignDisplay]] is one of the String values `"standard"` or `"accounting"`, specifying whether to render negative numbers in accounting format, often signified by parenthesis. It is only used when [[UnitType]] has the value `"currency"` and when [[SignDisplay]] is not `"never"`.</li>
+      <li>[[CurrencySign]] is one of the String values `"standard"` or `"accounting"`, specifying whether to render negative numbers in accounting format, often signified by parenthesis. It is only used when [[UnitType]] has the value `"currency"` and when [[SignDisplay]] is not `"never"`.</li>
       <li>[[MinimumIntegerDigits]] is a non-negative integer Number value indicating the minimum integer digits to be used. Numbers will be padded with leading zeroes if necessary.</li>
       <li>[[MinimumFractionDigits]] and [[MaximumFractionDigits]] are non-negative integer Number values indicating the minimum and maximum fraction digits to be used. Numbers will be rounded or padded with trailing zeroes if necessary.</li>
       <li>[[MinimumSignificantDigits]] and [[MaximumSignificantDigits]] are positive integer Number values indicating the minimum and maximum fraction digits to be shown. Either none or both of these properties are present; if they are, they override minimum and maximum integer and fraction digits – the formatter uses however many integer and fraction digits are required to display the specified number of significant digits.</li>
