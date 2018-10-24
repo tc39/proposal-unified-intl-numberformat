@@ -27,6 +27,7 @@ Certain sections of the spec have been refactored with the following objectives:
 
 - Fix https://github.com/tc39/ecma402/issues/238 (currency long name has dependency on plural form, and the currency long name pattern has dependency on currencyWidth).
 - Move pattern resolution out of the constructor to keep all internal fields of NumberFormat locale-agnostic, making it easier to reason about behavior in the format method.
+- Fix https://github.com/sffc/proposal-unified-intl-numberformat/issues/2, to allow minimumIntegerDigits to control integer digit count when significant digits are used.
 
 In addition, one missing option is added to the existing `currencyDisplay` setting: "narrowSymbol", which uses the CLDR narrow-format symbol:
 

@@ -126,7 +126,13 @@
         1. If _intlObject_.[[MinimumSignificantDigits]] and _intlObject_.[[MaximumSignificantDigits]] are both not *undefined*, then
           1. Let _result_ be ToRawPrecision(_x_, _intlObject_.[[MinimumSignificantDigits]], _intlObject_.[[MaximumSignificantDigits]]).
         1. Else,
-          1. Let _result_ be ToRawFixed(_x_, _intlObject_.[[MinimumIntegerDigits]], _intlObject_.[[MinimumFractionDigits]], _intlObject_.[[MaximumFractionDigits]]).
+          1. Let _result_ be ToRawFixed(_x_, _intlObject_.[[MinimumFractionDigits]], _intlObject_.[[MaximumFractionDigits]]).
+        1. Let _minInteger_ be _intlObject_.[[MinimumIntegerDigits]].
+        1. Let _intCount_ be _result_.[[IntegerDigitsCount]].
+        1. If _intCount_ < _minInteger_, then
+          1. Let _forwardZeros_ be the String consisting of _minInteger_–_intCount_ occurrences of the character `"0"`.
+          1. Let _oldString_ be _result_.[[FormattedString]].
+          1. Let _result_.[[FormattedString]] be the concatenation of Strings _forwardZeros_ and _oldString_.
         1. If _isNegative_, then
           1. Let _result_.[[RoundedNumber]] be -_result_.[[RoundedNumber]].
         1. Return _result_.
@@ -425,14 +431,16 @@
           1. Let _e_ and _n_ be integers such that 10<sup>_p_–1</sup> ≤ _n_ < 10<sup>_p_</sup> and for which the exact mathematical value of _n_ × 10<sup>_e_–_p_+1</sup> – _x_ is as close to zero as possible. If there are two such sets of _e_ and _n_, pick the _e_ and _n_ for which _n_ × 10<sup>_e_–_p_+1</sup> is larger.
           1. Let _m_ be the String consisting of the digits of the decimal representation of _n_ (in order, with no leading zeroes).
           1. Let _xFinal_ be _n_ × 10<sup>_e_–_p_+1</sup>.
-        1. If _e_ ≥ _p_, then
-          1. Return the concatenation of _m_ and _e_-_p_+1 occurrences of the character `"0"`.
-        1. If _e_ = _p_-1, then
-          1. Return _m_.
-        1. If _e_ ≥ 0, then
+        1. If _e_ ≥ _p_–1, then
+          1. Let _m_ be the concatenation of _m_ and _e_–_p_+1 occurrences of the character `"0"`.
+          1. Let _int_ be _e_+1.
+        1. Else If _e_ ≥ 0, then
           1. Let _m_ be the concatenation of the first _e_+1 characters of _m_, the character `"."`, and the remaining _p_–(_e_+1) characters of _m_.
-        1. If _e_ < 0, then
+          1. Let _int_ be _e_+1.
+        1. Else,
+          1. Assert: _e_ < 0.
           1. Let _m_ be the concatenation of the String `"0."`, –(_e_+1) occurrences of the character `"0"`, and the string _m_.
+          1. Let _int_ be 1.
         1. If _m_ contains the character `"."`, and _maxPrecision_ > _minPrecision_, then
           1. Let _cut_ be _maxPrecision_ – _minPrecision_.
           1. Repeat, while _cut_ > 0 and the last character of _m_ is `"0"`
@@ -440,7 +448,7 @@
             1. Decrease _cut_ by 1.
           1. If the last character of _m_ is `"."`, then
             1. Remove the last character from _m_.
-        1. Return the Record { [[FormattedString]]: _m_, [[RoundedNumber]]: _xFinal_ }.
+        1. Return the Record { [[FormattedString]]: _m_, [[RoundedNumber]]: _xFinal_, [[IntegerDigitsCount]]: _int_ }.
       </emu-alg>
     </emu-clause>
 
@@ -472,10 +480,7 @@
           1. Decrease _cut_ by 1.
         1. If the last character of _m_ is `"."`, then
           1. Remove the last character from _m_.
-        1. If _int_ < _minInteger_, then
-          1. Let _z_ be the String consisting of _minInteger_–_int_ occurrences of the character `"0"`.
-          1. Let _m_ be the concatenation of Strings _z_ and _m_.
-        1. Return the Record { [[FormattedString]]: _m_, [[RoundedNumber]]: _xFinal_ }.
+        1. Return the Record { [[FormattedString]]: _m_, [[RoundedNumber]]: _xFinal_, [[IntegerDigitsCount]]: _int_ }.
       </emu-alg>
     </emu-clause>
 
