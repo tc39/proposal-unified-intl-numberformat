@@ -15,23 +15,31 @@
         1. Assert: Type(_options_) is Object.
         1. Assert: Type(_mnfdDefault_) is Number.
         1. Assert: Type(_mxfdDefault_) is Number.
-        1. Let _mnid_ be ? GetNumberOption(_options_, `"minimumIntegerDigits,"`, 1, 21, 1).
-        1. Let _mnfd_ be ? GetNumberOption(_options_, `"minimumFractionDigits"`, 0, 20, _mnfdDefault_).
-        1. Let _mxfdActualDefault_ be max( _mnfd_, _mxfdDefault_ ).
-        1. Let _mxfd_ be ? GetNumberOption(_options_, `"maximumFractionDigits"`, _mnfd_, 20, _mxfdActualDefault_).
+        1. Let _mnfd_ be ? Get(_options_, `"minimumFractionDigits"`).
+        1. Let _mxfd_ be ? Get(_options_, `"maximumFractionDigits"`).
         1. Let _mnsd_ be ? Get(_options_, `"minimumSignificantDigits"`).
         1. Let _mxsd_ be ? Get(_options_, `"maximumSignificantDigits"`).
+        1. Let _mnid_ be ? GetNumberOption(_options_, `"minimumIntegerDigits,"`, 1, 21, 1).
+        1. Set _intlObj_.[[MinimumIntegerDigits]] to _mnid_.
         1. If _mnsd_ is not *undefined* or _mxsd_ is not *undefined*, then
-          1. Set _intlObj_.[[RoundingType]] to `"significantDigits"`
+          1. Set _intlObj_.[[RoundingType]] to `"significantDigits"`.
           1. Let _mnsd_ be ? DefaultNumberOption(_mnsd_, 1, 21, 1).
           1. Let _mxsd_ be ? DefaultNumberOption(_mxsd_, _mnsd_, 21, 21).
           1. Set _intlObj_.[[MinimumSignificantDigits]] to _mnsd_.
           1. Set _intlObj_.[[MaximumSignificantDigits]] to _mxsd_.
-        1. Else,
-          1. Set _intlObj_.[[RoundingType]] to `"fractionDigits"`
+        1. Else If _mnfd_ is not *undefined* or _mxfd_ is not *undefined*, then
+          1. Set _intlObj_.[[RoundingType]] to `"fractionDigits"`.
+          1. Let _mnfd_ be ? DefaultNumberOption(_mnfd_, 0, 20, _mnfdDefault_).
+          1. Let _mxfdActualDefault_ be max( _mnfd_, _mxfdDefault_ ).
+          1. Let _mxfd_ be ? DefaultNumberOption(_mxfd_, _mnfd_, 20, _mxfdActualDefault_).
           1. Set _intlObj_.[[MinimumFractionDigits]] to _mnfd_.
           1. Set _intlObj_.[[MaximumFractionDigits]] to _mxfd_.
-        1. Set _intlObj_.[[MinimumIntegerDigits]] to _mnid_.
+        1. Else If _intlObj_.[[Notation]] = "compact", then
+          1. Set _intlObj_.[[RoundingType]] to `"compactRounding"`.
+        1. Else,
+          1. Set _intlObj_.[[RoundingType]] to `"fractionDigits"`.
+          1. Set _intlObj_.[[MinimumFractionDigits]] to _mnfdDefault_.
+          1. Set _intlObj_.[[MaximumFractionDigits]] to _mxfdDefault_.
       </emu-alg>
     </emu-clause>
 
@@ -123,10 +131,15 @@
         1. Let _isNegative_ be _x_ &lt; 0.
         1. If _isNegative_, then
           1. Let _x_ be -_x_.
-        1. If _intlObject_.[[MinimumSignificantDigits]] and _intlObject_.[[MaximumSignificantDigits]] are both not *undefined*, then
+        1. If _intlObject_.[[RoundingType]] is `"significantDigits"`, then
           1. Let _result_ be ToRawPrecision(_x_, _intlObject_.[[MinimumSignificantDigits]], _intlObject_.[[MaximumSignificantDigits]]).
-        1. Else,
+        1. Else If _intlObject_.[[RoundingType]] is `"fractionDigits"`, then,
           1. Let _result_ be ToRawFixed(_x_, _intlObject_.[[MinimumFractionDigits]], _intlObject_.[[MaximumFractionDigits]]).
+        1. Else,
+          1. Assert: _intlObject_.[[RoundingType]] is `"compactRounding"`.
+          1. Let _result_ be ToRawFixed(_x_, 0, 0).
+          1. If _result_.[[IntegerDigitsCount]] = 1, then
+            1. Let _result_ be ToRawFixed(_x_, 0, 1).
         1. Let _minInteger_ be _intlObject_.[[MinimumIntegerDigits]].
         1. Let _intCount_ be _result_.[[IntegerDigitsCount]].
         1. If _intCount_ < _minInteger_, then
@@ -663,7 +676,7 @@
 
       <emu-alg>
         1. If NewTarget is *undefined*, let _newTarget_ be the active function object, else let _newTarget_ be NewTarget.
-        1. Let _numberFormat_ be ? OrdinaryCreateFromConstructor(_newTarget_, `"%NumberFormatPrototype%"`, &laquo; [[InitializedNumberFormat]], [[Locale]], [[DataLocale]], [[NumberingSystem]], [[Style]], [[UnitType]], [[MeasureUnit]], [[MeasureUnitDisplay]], [[Currency]], [[CurrencyDisplay]], [[CurrencySign]], [[MinimumIntegerDigits]], [[MinimumFractionDigits]], [[MaximumFractionDigits]], [[MinimumSignificantDigits]], [[MaximumSignificantDigits]], [[Notation]], [[CompactDisplay]], [[UseGrouping]], [[SignDisplay]], [[BoundFormat]] &raquo;).
+        1. Let _numberFormat_ be ? OrdinaryCreateFromConstructor(_newTarget_, `"%NumberFormatPrototype%"`, &laquo; [[InitializedNumberFormat]], [[Locale]], [[DataLocale]], [[NumberingSystem]], [[Style]], [[UnitType]], [[MeasureUnit]], [[MeasureUnitDisplay]], [[Currency]], [[CurrencyDisplay]], [[CurrencySign]], [[MinimumIntegerDigits]], [[MinimumFractionDigits]], [[MaximumFractionDigits]], [[MinimumSignificantDigits]], [[MaximumSignificantDigits]], [[RoundingType]], [[Notation]], [[CompactDisplay]], [[UseGrouping]], [[SignDisplay]], [[BoundFormat]] &raquo;).
         1. Perform ? InitializeNumberFormat(_numberFormat_, _locales_, _options_).
       </emu-alg>
       <emu-normative-optional>
@@ -937,8 +950,9 @@
       <li>[[CurrencyDisplay]] is one of the String values `"code"`, `"symbol"`, `"narrowSymbol"`, or `"name"`, specifying whether to display the currency as an ISO 4217 alphabetic currency code, a localized currency symbol, or a localized currency name if formatting with the `"currency"` style. It is only used when [[UnitType]] has the value `"currency"`.</li>
       <li>[[CurrencySign]] is one of the String values `"standard"` or `"accounting"`, specifying whether to render negative numbers in accounting format, often signified by parenthesis. It is only used when [[UnitType]] has the value `"currency"` and when [[SignDisplay]] is not `"never"`.</li>
       <li>[[MinimumIntegerDigits]] is a non-negative integer Number value indicating the minimum integer digits to be used. Numbers will be padded with leading zeroes if necessary.</li>
-      <li>[[MinimumFractionDigits]] and [[MaximumFractionDigits]] are non-negative integer Number values indicating the minimum and maximum fraction digits to be used. Numbers will be rounded or padded with trailing zeroes if necessary.</li>
-      <li>[[MinimumSignificantDigits]] and [[MaximumSignificantDigits]] are positive integer Number values indicating the minimum and maximum fraction digits to be shown. Either none or both of these properties are present; if they are, they override minimum and maximum integer and fraction digits – the formatter uses however many integer and fraction digits are required to display the specified number of significant digits.</li>
+      <li>[[MinimumFractionDigits]] and [[MaximumFractionDigits]] are non-negative integer Number values indicating the minimum and maximum fraction digits to be used. Numbers will be rounded or padded with trailing zeroes if necessary. These properties are present if and only if [[RoundingType]] is `"fractionDigits"`.</li>
+      <li>[[MinimumSignificantDigits]] and [[MaximumSignificantDigits]] are positive integer Number values indicating the minimum and maximum fraction digits to be shown. If present, the formatter uses however many fraction digits are required to display the specified number of significant digits. These properties are present if and only if [[RoundingType]] is `"significantDigits"`.</li>
+      <li>[[RoundingType]] is one of the String values `"fractionDigits"`, `"significantDigits"`, or `"compactRounding"`, indicating which rounding strategy to use. If `"fractionDigits"`, the number is rounded according to [[MinimumFractionDigits]] and [[MaximumFractionDigits]], as described above. If `"significantDigits"`, the number is rounded according to [[MinimumSignificantDigits]] and [[MaximumSignificantDigits]] as described above. If `"compactRounding"`, the number is rounded to 1 maximum fraction digit if there is 1 digit before the decimal separator, and otherwise round to 0 fraction digits.</li>
       <li>[[Notation]]  is one of the String values `"standard"`, `"scientific"`, `"engineering"`, or `"compact"`, specifying whether the number should be displayed without scaling, scaled to the units place with the power of ten in scientific notation, scaled to the nearest thousand with the power of ten in scientific notation, or scaled to the nearest locale-dependent compact decimal notation power of ten with the corresponding compact decimal notation affix.</li>
       <li>[[CompactDisplay]] is one of the String values `"short"` or `"long"`, specifying whether to display compact notation affixes in short form ("5K") or long form ("5 thousand") if formatting with the `"compact"` notation. It is only used when [[Notation]] has the value `"compact"`.</li>
       <li>[[UseGrouping]] is a Boolean value indicating whether a grouping separator should be used.</li>
