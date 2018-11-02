@@ -8,9 +8,8 @@
       <h1>SetNumberFormatDigitOptions ( _intlObj_, _options_, _mnfdDefault_, _mxfdDefault_ )</h1>
 
       <p>
-        The abstract operation SetNumberFormatDigitOptions
-        <del>applies digit options used for number formatting onto the intl object</del>
-        <ins>resolves the user-specified options in the digits realm onto the digits options object</ins>.
+        The abstract operation SetNumberFormatDigitOptions applies digit
+        options used for number formatting onto the intl object.
       </p>
       <emu-alg>
         1. Assert: Type(_intlObj_) is Object.
@@ -41,7 +40,7 @@
           1. <ins class="block">Let _mxfd_ be ? DefaultNumberOption(_mxfd_, _mnfd_, 20, _mxfdActualDefault_).</ins>
           1. <ins class="block">Set _intlObj_.[[MinimumFractionDigits]] to _mnfd_.</ins>
           1. <ins class="block">Set _intlObj_.[[MaximumFractionDigits]] to _mxfd_.</ins>
-        1. <ins class="block">Else If _intlObj_.[[Notation]] = `"compact"`, then</ins>
+        1. <ins class="block">Else If _intlObj_.[[Notation]] is `"compact"`, then</ins>
           1. <ins class="block">Set _intlObj_.[[RoundingType]] to `"compactRounding"`.</ins>
         1. <ins class="block">Else,</ins>
           1. <ins class="block">Set _intlObj_.[[RoundingType]] to `"fractionDigits"`.</ins>
@@ -177,16 +176,16 @@
           1. Let _result_ be ToRawFixed(_x_, 0, 0).
           1. If _result_.[[IntegerDigitsCount]] = 1, then
             1. Let _result_ be ToRawFixed(_x_, 0, 1).
+        1. Let _x_ be _result_.[[RoundedNumber]].
+        1. Let _string_ be _result_.[[FormattedString]].
+        1. Let _int_ be _result_.[[IntegerDigitsCount]].
         1. Let _minInteger_ be _intlObject_.[[MinimumIntegerDigits]].
-        1. Let _intCount_ be _result_.[[IntegerDigitsCount]].
-        1. If _intCount_ < _minInteger_, then
-          1. Let _forwardZeros_ be the String consisting of _minInteger_–_intCount_ occurrences of the character `"0"`.
-          1. Let _oldString_ be _result_.[[FormattedString]].
-          1. Let _result_.[[FormattedString]] be the concatenation of Strings _forwardZeros_ and _oldString_.
-        1. Delete _result_.[[IntegerDigitsCount]].
+        1. If _int_ < _minInteger_, then
+          1. Let _forwardZeros_ be the String consisting of _minInteger_–_int_ occurrences of the character `"0"`.
+          1. Let _string_ be the concatenation of Strings _forwardZeros_ and _string_.
         1. If _isNegative_, then
-          1. Let _result_.[[RoundedNumber]] be -_result_.[[RoundedNumber]].
-        1. Return _result_.
+          1. Let _x_ be -_x_.
+        1. Return the Record { [[RoundedNumber]]: _x_, [[FormattedString]]: _string_ }.
       </emu-alg>
       </ins>
     </emu-clause>
@@ -601,9 +600,9 @@
         1. Set _intlObj_.[[Style]] to _style_.
         1. Let _currency_ be ? GetOption(_options_, `"currency"`, `"string"`, *undefined*, *undefined*).
         1. Let _currencyDisplay_ be ? GetOption(_options_, `"currencyDisplay"`, `"string"`, &laquo; `"code"`, `"symbol"`, `"narrowSymbol"`, `"name"` &raquo;, `"symbol"`).
+        1. Let _currencySign_ be ? GetOption(_options_, `"currencySign"`, `"string"`, &laquo; `"standard"`, `"accounting"` &raquo;, `"standard"`).
         1. Let _unit_ be ? GetOption(_options_, `"unit"`, `"string"`, *undefined*, *undefined*).
         1. Let _unitDisplay_ be ? GetOption(_options_, `"unitDisplay"`, `"string"`, &laquo; `"short"`, `"narrow"`, `"long"` &raquo;, `"short"`).
-        1. Let _currencySign_ be ? GetOption(_options_, `"currencySign"`, `"string"`, &laquo; `"standard"`, `"accounting"` &raquo;, `"standard"`).
         1. If _style_ is `"decimal"`, then
           1. Set _intlObj_.[[UnitType]] to `"none"`.
         1. If _style_ is `"currency"`, then
