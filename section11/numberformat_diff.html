@@ -28,22 +28,22 @@
         1. <ins class="block">Let _mnid_ be ? GetNumberOption(_options_, `"minimumIntegerDigits,"`, 1, 21, 1).</ins>
         1. <ins class="block">Set _intlObj_.[[MinimumIntegerDigits]] to _mnid_.</ins>
         1. If _mnsd_ is not *undefined* or _mxsd_ is not *undefined*, then
-          1. <ins class="block">Set _intlObj_.[[RoundingType]] to `"significantDigits"`.</ins>
+          1. <ins class="block">Set _intlObj_.[[RoundingType]] to `"significant-digits"`.</ins>
           1. Let _mnsd_ be ? DefaultNumberOption(_mnsd_, 1, 21, 1).
           1. Let _mxsd_ be ? DefaultNumberOption(_mxsd_, _mnsd_, 21, 21).
           1. Set _intlObj_.[[MinimumSignificantDigits]] to _mnsd_.
           1. Set _intlObj_.[[MaximumSignificantDigits]] to _mxsd_.
         1. <ins class="block">Else If _mnfd_ is not *undefined* or _mxfd_ is not *undefined*, then</ins>
-          1. <ins class="block">Set _intlObj_.[[RoundingType]] to `"fractionDigits"`.</ins>
+          1. <ins class="block">Set _intlObj_.[[RoundingType]] to `"fraction-digits"`.</ins>
           1. <ins class="block">Let _mnfd_ be ? DefaultNumberOption(_mnfd_, 0, 20, _mnfdDefault_).</ins>
           1. <ins class="block">Let _mxfdActualDefault_ be max( _mnfd_, _mxfdDefault_ ).</ins>
           1. <ins class="block">Let _mxfd_ be ? DefaultNumberOption(_mxfd_, _mnfd_, 20, _mxfdActualDefault_).</ins>
           1. <ins class="block">Set _intlObj_.[[MinimumFractionDigits]] to _mnfd_.</ins>
           1. <ins class="block">Set _intlObj_.[[MaximumFractionDigits]] to _mxfd_.</ins>
         1. <ins class="block">Else If _intlObj_.[[Notation]] is `"compact"`, then</ins>
-          1. <ins class="block">Set _intlObj_.[[RoundingType]] to `"compactRounding"`.</ins>
+          1. <ins class="block">Set _intlObj_.[[RoundingType]] to `"compact-rounding"`.</ins>
         1. <ins class="block">Else,</ins>
-          1. <ins class="block">Set _intlObj_.[[RoundingType]] to `"fractionDigits"`.</ins>
+          1. <ins class="block">Set _intlObj_.[[RoundingType]] to `"fraction-digits"`.</ins>
           1. <ins class="block">Set _intlObj_.[[MinimumFractionDigits]] to _mnfdDefault_.</ins>
           1. <ins class="block">Set _intlObj_.[[MaximumFractionDigits]] to _mxfdDefault_.</ins>
       </emu-alg>
@@ -167,12 +167,12 @@
         1. Let _isNegative_ be _x_ &lt; 0 or _x_ is *-0*.
         1. If _isNegative_, then
           1. Let _x_ be -_x_.
-        1. If _intlObject_.[[RoundingType]] is `"significantDigits"`, then
+        1. If _intlObject_.[[RoundingType]] is `"significant-digits"`, then
           1. Let _result_ be ToRawPrecision(_x_, _intlObject_.[[MinimumSignificantDigits]], _intlObject_.[[MaximumSignificantDigits]]).
-        1. Else If _intlObject_.[[RoundingType]] is `"fractionDigits"`, then,
+        1. Else If _intlObject_.[[RoundingType]] is `"fraction-digits"`, then,
           1. Let _result_ be ToRawFixed(_x_, _intlObject_.[[MinimumFractionDigits]], _intlObject_.[[MaximumFractionDigits]]).
         1. Else,
-          1. Assert: _intlObject_.[[RoundingType]] is `"compactRounding"`.
+          1. Assert: _intlObject_.[[RoundingType]] is `"compact-rounding"`.
           1. Let _result_ be ToRawFixed(_x_, 0, 0).
           1. If _result_.[[IntegerDigitsCount]] = 1, then
             1. Let _result_ be ToRawFixed(_x_, 0, 1).
@@ -601,7 +601,7 @@
         1. Let _style_ be ? GetOption(_options_, `"style"`, `"string"`, &laquo; `"decimal"`, `"percent"`, `"currency"`, `"unit"` &raquo;, `"decimal"`).
         1. Set _intlObj_.[[Style]] to _style_.
         1. Let _currency_ be ? GetOption(_options_, `"currency"`, `"string"`, *undefined*, *undefined*).
-        1. Let _currencyDisplay_ be ? GetOption(_options_, `"currencyDisplay"`, `"string"`, &laquo; `"code"`, `"symbol"`, `"narrowSymbol"`, `"name"` &raquo;, `"symbol"`).
+        1. Let _currencyDisplay_ be ? GetOption(_options_, `"currencyDisplay"`, `"string"`, &laquo; `"code"`, `"symbol"`, `"narrow-symbol"`, `"name"` &raquo;, `"symbol"`).
         1. Let _currencySign_ be ? GetOption(_options_, `"currencySign"`, `"string"`, &laquo; `"standard"`, `"accounting"` &raquo;, `"standard"`).
         1. Let _unit_ be ? GetOption(_options_, `"unit"`, `"string"`, *undefined*, *undefined*).
         1. Let _unitDisplay_ be ? GetOption(_options_, `"unitDisplay"`, `"string"`, &laquo; `"short"`, `"narrow"`, `"long"` &raquo;, `"short"`).
@@ -824,7 +824,7 @@
       <ul>
         <li>The list that is the value of the `"nu"` field of any locale field of [[LocaleData]] must not include the values `"native"`, `"traditio"`, or `"finance"`.</li>
         <li>[[LocaleData]][locale] must have a patterns field for all locale values. The value of this field must be a <del>record</del><ins>Record</ins>, which must have <del>fields with the names of the three number format styles: `"decimal"`, `"percent"`, and `"currency"`. Each of these fields in turn must be a record with the fields positivePattern and negativePattern.</del> <ins>three fields: `"decimal"`, `"currency"`, and `"unit"`.</ins></li>
-        <li><ins class="block">The two fields `"currency"` and `"unit"` noted above must be Records with at least one field, `"fallback"`. The `"currency"` may have additional fields with keys corresponding to currency codes according to <emu-xref href="#sec-currency-codes"></emu-xref>.  Each field of `"currency"` must be a Record with fields corresponding to the possible currencyDisplay values: `"code"`, `"symbol"`, `"narrowSymbol"`, and `"name"`.  Each of those fields must contain a Record with fields corresponding to the possible currencySign values: `"standard"` or `"accounting"`.  The `"unit"` field (of [[LocaleData]][locale]) may have additional fields beyond the required field `"fallback"` with keys corresponding to measurement unit identifiers corresponding to <emu-xref href="#sec-measurement-unit-identifiers"></emu-xref>.  Each field of `"unit"` must be a Record with fields corresponding to the possible unitDisplay values: `"narrow"`, `"short"`, and `"long"`.</ins></li>
+        <li><ins class="block">The two fields `"currency"` and `"unit"` noted above must be Records with at least one field, `"fallback"`. The `"currency"` may have additional fields with keys corresponding to currency codes according to <emu-xref href="#sec-currency-codes"></emu-xref>.  Each field of `"currency"` must be a Record with fields corresponding to the possible currencyDisplay values: `"code"`, `"symbol"`, `"narrow-symbol"`, and `"name"`.  Each of those fields must contain a Record with fields corresponding to the possible currencySign values: `"standard"` or `"accounting"`.  The `"unit"` field (of [[LocaleData]][locale]) may have additional fields beyond the required field `"fallback"` with keys corresponding to measurement unit identifiers corresponding to <emu-xref href="#sec-measurement-unit-identifiers"></emu-xref>.  Each field of `"unit"` must be a Record with fields corresponding to the possible unitDisplay values: `"narrow"`, `"short"`, and `"long"`.</ins></li>
         <li><ins class="block">All of the leaf fields so far described for the patterns tree (`"decimal"`, great-grandchildren of `"currency"`, and grandchildren of `"unit"`) must be Records with fields corresponding to the possible signDisplay values: `"auto"`, `"always"`, `"never"`, and `"except-zero"`.  Each of these fields must be a Record with the keys `"standard"`, `"scientific"`, `"compactShort"`, and `"compactLong"`.  Each of these fields must be a Record with the keys `"positivePattern"`, `"zeroPattern"`, and `"negativePattern"`.</ins></li>
         <li>The value of <del>these fields</del> <ins>the aforementioned fields (the sign-dependent pattern fields)</ins> must be string values that must contain the substring `"{number}"` and may contain the substrings `"{plusSign}"`, <del>and</del> `"{minusSign}"`<ins>, `"{compactSymbol}"`, `"{compactName}"`, `"{scientificSeparator}"`, and `"{scientificExponent}"`</ins>; <del>the values within the percent field must also contain the substring `"{percentSign}"`;</del> the values within the <del>currency</del><ins>`"currency"`</ins> field must also contain <del>the substring `"{currency}"`</del> <ins>one of the following substrings: `"{currencyCode}"`, `"{currencySymbol}"`, `"{currencyNarrowSymbol}"`, or `"{currencyName}"`; and the values within the `"unit"` field must also contain one of the following substrings: `"{percentSign}"`, `"{unitSymbol}"`, `"{unitNarrowSymbol}"`, or `"{unitName}"`</ins>. The pattern strings must not contain any characters in the General Category "Number, decimal digit" as specified by the Unicode Standard.</li>
       </ul>
@@ -1026,12 +1026,12 @@
       <li><ins class="block">[[Unit]] is a core unit identifier, as defined by Unicode Technical Standard #35, Part 2, Section 6. It is only used when [[Style]] has the value `"unit"` or `"percent"`.</ins></li>
       <li><ins class="block">[[UnitDisplay]] is one of the String values `"short"`, `"narrow"`, or `"long"`, specifying whether to display the unit as a symbol, narrow symbol, or localized long name if formatting with the `"unit"` or `"percent"` style. It is only used when [[Style]] has the value `"unit"` or `"percent"`.</ins></li>
       <li>[[Currency]] is a String value with the currency code identifying the currency to be used if formatting with the `"currency"` <del>style</del><ins>unit type</ins>. It is only used when [[Style]] has the value `"currency"`.</li>
-      <li>[[CurrencyDisplay]] is one of the String values `"code"`, `"symbol"`, <ins>`"narrowSymbol"`,</ins> or `"name"`, specifying whether to display the currency as an ISO 4217 alphabetic currency code, a localized currency symbol, or a localized currency name if formatting with the `"currency"` style. It is only used when [[Style]] has the value `"currency"`.</li>
+      <li>[[CurrencyDisplay]] is one of the String values `"code"`, `"symbol"`, <ins>`"narrow-symbol"`,</ins> or `"name"`, specifying whether to display the currency as an ISO 4217 alphabetic currency code, a localized currency symbol, or a localized currency name if formatting with the `"currency"` style. It is only used when [[Style]] has the value `"currency"`.</li>
       <li><ins class="block">[[CurrencySign]] is one of the String values `"standard"` or `"accounting"`, specifying whether to render negative numbers in accounting format, often signified by parenthesis. It is only used when [[Style]] has the value `"currency"` and when [[SignDisplay]] is not `"never"`.</ins></li>
       <li>[[MinimumIntegerDigits]] is a non-negative integer Number value indicating the minimum integer digits to be used. Numbers will be padded with leading zeroes if necessary.</li>
-      <li>[[MinimumFractionDigits]] and [[MaximumFractionDigits]] are non-negative integer Number values indicating the minimum and maximum fraction digits to be used. Numbers will be rounded or padded with trailing zeroes if necessary. <ins>These properties are only used when [[RoundingType]] is `"fractionDigits"`.</ins></li>
-      <li>[[MinimumSignificantDigits]] and [[MaximumSignificantDigits]] are positive integer Number values indicating the minimum and maximum fraction digits to be shown. <del>Either none or both of these properties are present; if they are, they override minimum and maximum integer and fraction digits –</del> <ins>If present,</ins> the formatter uses however many <del>integer and</del> fraction digits are required to display the specified number of significant digits. <ins>These properties are only used when [[RoundingType]] is `"significantDigits"`.</ins></li>
-      <li><ins class="block">[[RoundingType]] is one of the String values `"fractionDigits"`, `"significantDigits"`, or `"compactRounding"`, indicating which rounding strategy to use. If `"fractionDigits"`, the number is rounded according to [[MinimumFractionDigits]] and [[MaximumFractionDigits]], as described above. If `"significantDigits"`, the number is rounded according to [[MinimumSignificantDigits]] and [[MaximumSignificantDigits]] as described above. If `"compactRounding"`, the number is rounded to 1 maximum fraction digit if there is 1 digit before the decimal separator, and otherwise round to 0 fraction digits.</ins></li>
+      <li>[[MinimumFractionDigits]] and [[MaximumFractionDigits]] are non-negative integer Number values indicating the minimum and maximum fraction digits to be used. Numbers will be rounded or padded with trailing zeroes if necessary. <ins>These properties are only used when [[RoundingType]] is `"fraction-digits"`.</ins></li>
+      <li>[[MinimumSignificantDigits]] and [[MaximumSignificantDigits]] are positive integer Number values indicating the minimum and maximum fraction digits to be shown. <del>Either none or both of these properties are present; if they are, they override minimum and maximum integer and fraction digits –</del> <ins>If present,</ins> the formatter uses however many <del>integer and</del> fraction digits are required to display the specified number of significant digits. <ins>These properties are only used when [[RoundingType]] is `"significant-digits"`.</ins></li>
+      <li><ins class="block">[[RoundingType]] is one of the String values `"fraction-digits"`, `"significant-digits"`, or `"compact-rounding"`, indicating which rounding strategy to use. If `"fraction-digits"`, the number is rounded according to [[MinimumFractionDigits]] and [[MaximumFractionDigits]], as described above. If `"significant-digits"`, the number is rounded according to [[MinimumSignificantDigits]] and [[MaximumSignificantDigits]] as described above. If `"compact-rounding"`, the number is rounded to 1 maximum fraction digit if there is 1 digit before the decimal separator, and otherwise round to 0 fraction digits.</ins></li>
       <li><ins class="block">[[Notation]]  is one of the String values `"standard"`, `"scientific"`, `"engineering"`, or `"compact"`, specifying whether the number should be displayed without scaling, scaled to the units place with the power of ten in scientific notation, scaled to the nearest thousand with the power of ten in scientific notation, or scaled to the nearest locale-dependent compact decimal notation power of ten with the corresponding compact decimal notation affix.</ins></li>
       <li><ins class="block">[[CompactDisplay]] is one of the String values `"short"` or `"long"`, specifying whether to display compact notation affixes in short form ("5K") or long form ("5 thousand") if formatting with the `"compact"` notation. It is only used when [[Notation]] has the value `"compact"`.</ins></li>
       <li>[[UseGrouping]] is a Boolean value indicating whether a grouping separator should be used.</li>
