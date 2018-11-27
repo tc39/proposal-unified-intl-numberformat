@@ -31,13 +31,13 @@ Certain sections of the spec have been refactored with the following objectives:
 - Move pattern resolution out of the constructor to keep all internal fields of NumberFormat locale-agnostic, making it easier to reason about behavior in the format method.
 - Fix https://github.com/tc39-transfer/proposal-unified-intl-numberformat/issues/2, to allow minimumIntegerDigits to control integer digit count when significant digits are used.
 
-In addition, one missing option is added to the existing `currencyDisplay` setting: "narrowSymbol", which uses the CLDR narrow-format symbol:
+In addition, one missing option is added to the existing `currencyDisplay` setting: "narrow-symbol", which uses the CLDR narrow-format symbol:
 
 ```javascript
 (100).toLocaleString("en-CA", {
     style: "currency",
     currency: "USD",
-    currencyDisplay: "narrowSymbol"
+    currencyDisplay: "narrow-symbol"
 });
 // ==> "$100" (rather than "US$100")
 ```
@@ -49,7 +49,7 @@ Units of measurement can be formatted as follows:
 ```javascript
 (9.81).toLocaleString("en-US", {
     style: "unit",
-    unit: "acceleration-meter-per-second-squared",
+    unit: "meter-per-second-squared",
     unitDisplay: "short"
 });
 // ==> "9.81 m/s²"
@@ -58,9 +58,7 @@ Units of measurement can be formatted as follows:
 The syntax was discussed in #3.
 
 - `style` receives the string value "unit"
-- `unit` receives a string measurement unit identifier, defined in [UTS #35, Part 2, Section 6](http://unicode.org/reports/tr35/tr35-general.html#Unit_Elements).  See also the [full list of unit identifiers](https://unicode.org/repos/cldr/tags/latest/common/validity/unit.xml).
-    - Note: currently this is restricted to single units as listed in the CLDR specification.  If there is sufficient demand, a future proposal could add ways to combine units, such as compound units.  Note that certain compound units, such as "meters per second", are already available as standalone units in CLDR.
-    - Also relecant [CLDR #11271](https://unicode.org/cldr/trac/ticket/11271) about fleshing out some details on unit identifiers in the spec.
+- `unit` receives a string core unit identifier, defined in [UTS #35, Part 2, Section 6](http://unicode.org/reports/tr35/tr35-general.html#Unit_Elements).  See also the [full list of unit identifiers](https://unicode.org/repos/cldr/tags/latest/common/validity/unit.xml).
 - `unitDisplay`, named after the corresponding setting for currencies, `currencyDisplay`, takes either "narrow", "short", or "long".
 
 ## III. Scientific and Compact Notation
@@ -91,6 +89,8 @@ The syntax was discussed in #5.
 - `compactDisplay`, used only when `notation` is "compact", takes either "short" or "long"
 
 Rounding-related settings (min/max integer/fraction digits) are applied after the number is scaled according to the chosen notation.
+
+When `notation` is "compact" and there are no user-specified rounding options, a special compact notation rounding strategy is used: round to the nearest integer, but always keep 2 significant digits.  For example, 123.4K rounds to 123K, and 1.234K rounds to 1.2K.  The user can determine that the compact rounding strategy is being used in the *resolvedOptions* if `notation` is "compact" *and* none of the rounding settings are present.
 
 Notation styles are allowed to be combined with other options:
 
