@@ -3,6 +3,8 @@ Intl.NumberFormat Unified API Proposal
 
 [TC39 Stage 2 Proposal](https://docs.google.com/presentation/d/1_1D15PWniTlbLu1BOU9aDf5H87Ecq85i0CuLl5KA4DE/edit?usp=sharing)
 
+[TC39 Stage 3 Proposal](https://docs.google.com/presentation/d/1BljVP4ENAqJt3CLXKapq_39Gr5RG6f1h9SQ_tsP7V8Y/edit?usp=sharing)
+
 [View Spec](https://tc39-transfer.github.io/proposal-unified-intl-numberformat/)
 
 ## Background / Motivation
