@@ -139,12 +139,12 @@ The syntax was discussed in #6:
 
 Examples of signDisplay choices with Latin digits:
 
-signDisplay | -1  | 0   | 1
+signDisplay | -1  | -0  | 0   | 1
 ----------- | --- | --- | ---
-auto        | -1  | 0   | 1
-always      | -1  | +0  | +1
-never       | 1   | 0   | 1
-except-zero | -1  | 0   | +1
+auto        | -1  | 0   | 0   | 1
+always      | -1  | -0  | +0  | +1
+never       | 1   | 0   | 0   | 1
+except-zero | -1  | 0   | 0   | +1
 
 As usual, this may be combined with other options.
 
