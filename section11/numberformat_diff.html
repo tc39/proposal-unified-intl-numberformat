@@ -16,17 +16,15 @@
         1. Assert: Type(_options_) is Object.
         1. Assert: Type(_mnfdDefault_) is Number.
         1. Assert: Type(_mxfdDefault_) is Number.
-        1. <del class="block">Let _mnid_ be ? GetNumberOption(_options_, `"minimumIntegerDigits"`, 1, 21, 1).</del>
+        1. Let _mnid_ be ? GetNumberOption(_options_, `"minimumIntegerDigits"`, 1, 21, 1).
         1. Let _mnfd_ be ? Get<del>NumberOption</del>(_options_, `"minimumFractionDigits"`<del>, 0, 20, _mnfdDefault_</del>).
         1. <del class="block">Let _mxfdActualDefault_ be max( _mnfd_, _mxfdDefault_ ).</del>
         1. Let _mxfd_ be ? Get<del>NumberOption</del>(_options_, `"maximumFractionDigits"`<del>, _mnfd_, 20, _mxfdActualDefault_</del>).
         1. Let _mnsd_ be ? Get(_options_, `"minimumSignificantDigits"`).
         1. Let _mxsd_ be ? Get(_options_, `"maximumSignificantDigits"`).
-        1. <del class="block">Set _intlObj_.[[MinimumIntegerDigits]] to _mnid_.</del>
+        1. Set _intlObj_.[[MinimumIntegerDigits]] to _mnid_.
         1. <del class="block">Set _intlObj_.[[MinimumFractionDigits]] to _mnfd_.</del>
         1. <del class="block">Set _intlObj_.[[MaximumFractionDigits]] to _mxfd_.</del>
-        1. <ins class="block">Let _mnid_ be ? GetNumberOption(_options_, `"minimumIntegerDigits,"`, 1, 21, 1).</ins>
-        1. <ins class="block">Set _intlObj_.[[MinimumIntegerDigits]] to _mnid_.</ins>
         1. If _mnsd_ is not *undefined* or _mxsd_ is not *undefined*, then
           1. <ins class="block">Set _intlObj_.[[RoundingType]] to `"significant-digits"`.</ins>
           1. Let _mnsd_ be ? DefaultNumberOption(_mnsd_, 1, 21, 1).
