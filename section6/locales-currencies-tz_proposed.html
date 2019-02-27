@@ -176,25 +176,27 @@
       </p>
 
       <emu-alg>
-        1. If the result of IsSanctionedUnitIdentifier(_unitIdentifier_) is *true*, then
+        1. If the result of IsSanctionedSimpleUnitIdentifier(_unitIdentifier_) is *true*, then
+          1. Return *true*.
+        1. If the result of IsSanctionedCompoundUnitIdentifier(_unitIdentifier_) is *true*, then
           1. Return *true*.
         1. If the substring `"-per-"` does not occur exactly once in _unitIdentifier_, then
           1. Return *false*.
         1. Let _numerator_ be the substring of _unitIdentifier_ from the beginning to just before `"-per-"`.
-        1. If the result of IsSanctionedUnitIdentifier(_numerator_) is *false*, then
+        1. If the result of IsSanctionedSimpleUnitIdentifier(_numerator_) is *false*, then
           1. Return *false*.
         1. Let _denominator_ be the substring of _unitIdentifier_ from just after `"-per-"` to the end.
-        1. If the result of IsSanctionedUnitIdentifier(_denominator_) is *false*, then
+        1. If the result of IsSanctionedSimpleUnitIdentifier(_denominator_) is *false*, then
           1. Return *false*.
         1. Return *true*.
       </emu-alg>
     </emu-clause>
 
-    <emu-clause id="sec-issanctionedunitidentifier" aoid="IsSanctionedUnitIdentifier">
-      <h1>IsSanctionedUnitIdentifier ( _unitIdentifier_ )</h1>
+    <emu-clause id="sec-issanctionedsimpleunitidentifier" aoid="IsSanctionedSimpleUnitIdentifier">
+      <h1>IsSanctionedSimpleUnitIdentifier ( _unitIdentifier_ )</h1>
 
       <p>
-        The IsSanctionedUnitIdentifier abstract operation verifies that the given core unit identifier is among those sanctioned in the current version of the ECMAScript standard, based on the Validity Data as described in UTS #35, Part 1, Section 3.11; the list may change over time. The following steps are taken:
+        The IsSanctionedSimpleUnitIdentifier abstract operation verifies that the given core unit identifier is among the simple units sanctioned in the current version of the ECMAScript standard, based on the Validity Data as described in UTS #35, Part 1, Section 3.11; the list may change over time. As discussed in UTS #35, a simple unit is one that does not have a numerator and denominator. The following steps are taken:
       </p>
 
       <emu-alg>
@@ -262,14 +264,11 @@
           <li>kilogram</li>
           <li>kilohertz</li>
           <li>kilojoule</li>
-          <li>kilometer-per-hour</li>
           <li>kilometer</li>
           <li>kilowatt-hour</li>
           <li>kilowatt</li>
           <li>knot</li>
           <li>light-year</li>
-          <li>liter-per-100kilometers</li>
-          <li>liter-per-kilometer</li>
           <li>liter</li>
           <li>lux</li>
           <li>megabit</li>
@@ -277,26 +276,19 @@
           <li>megahertz</li>
           <li>megaliter</li>
           <li>megawatt</li>
-          <li>meter-per-second-squared</li>
-          <li>meter-per-second</li>
           <li>meter</li>
           <li>metric-ton</li>
           <li>microgram</li>
           <li>micrometer</li>
           <li>microsecond</li>
-          <li>mile-per-gallon-imperial</li>
-          <li>mile-per-gallon</li>
-          <li>mile-per-hour</li>
           <li>mile-scandinavian</li>
           <li>mile</li>
           <li>milliampere</li>
           <li>millibar</li>
-          <li>milligram-per-deciliter</li>
           <li>milligram</li>
           <li>milliliter</li>
           <li>millimeter-of-mercury</li>
           <li>millimeter</li>
-          <li>millimole-per-liter</li>
           <li>millisecond</li>
           <li>milliwatt</li>
           <li>minute</li>
@@ -309,7 +301,6 @@
           <li>ounce-troy</li>
           <li>ounce</li>
           <li>parsec</li>
-          <li>part-per-million</li>
           <li>percent</li>
           <li>permille</li>
           <li>petabyte</li>
@@ -317,7 +308,6 @@
           <li>pint-metric</li>
           <li>pint</li>
           <li>point</li>
-          <li>pound-per-square-inch</li>
           <li>pound</li>
           <li>quart</li>
           <li>radian</li>
@@ -343,6 +333,33 @@
           <li>yard</li>
           <li>year-person</li>
           <li>year</li>
+        </ul>
+        1. Return *false*.
+      </emu-alg>
+    </emu-clause>
+
+    <emu-clause id="sec-issanctionedcompoundunitidentifier" aoid="IsSanctionedCompoundUnitIdentifier">
+      <h1>IsSanctionedCompoundUnitIdentifier ( _unitIdentifier_ )</h1>
+
+      <p>
+        The IsSanctionedCompoundUnitIdentifier abstract operation verifies that the given core unit identifier is among the compound units sanctioned in the current version of the ECMAScript standard, based on the Validity Data as described in UTS #35, Part 1, Section 3.11; the list may change over time. As discussed in UTS #35, a compound unit is one has a numerator and denominator. The following steps are taken:
+      </p>
+
+      <emu-alg>
+        1. If _unitIdentifier_ is in the following list, return *true*.
+        <ul>
+          <li>kilometer-per-hour</li>
+          <li>liter-per-100kilometers</li>
+          <li>liter-per-kilometer</li>
+          <li>meter-per-second-squared</li>
+          <li>meter-per-second</li>
+          <li>mile-per-gallon-imperial</li>
+          <li>mile-per-gallon</li>
+          <li>mile-per-hour</li>
+          <li>milligram-per-deciliter</li>
+          <li>millimole-per-liter</li>
+          <li>part-per-million</li>
+          <li>pound-per-square-inch</li>
         </ul>
         1. Return *false*.
       </emu-alg>
