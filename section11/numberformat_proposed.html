@@ -78,11 +78,12 @@
             1. Let _mxfdDefault_ be 0.
           1. Else,
             1. Let _mxfdDefault_ be 3.
-        1. Perform ? SetNumberFormatDigitOptions(_numberFormat_, _options_, _mnfdDefault_, _mxfdDefault_).
         1. Let _notation_ be ? GetOption(_options_, `"notation"`, `"string"`, &laquo; `"standard"`, `"scientific"`, `"engineering"`, `"compact"` &raquo;, `"standard"`).
         1. Set _numberFormat_.[[Notation]] to _notation_.
+        1. Perform ? SetNumberFormatDigitOptions(_numberFormat_, _options_, _mnfdDefault_, _mxfdDefault_).
         1. Let _compactDisplay_ be ? GetOption(_options_, `"compactDisplay"`, `"string"`, &laquo; `"short"`, `"long"` &raquo;, `"short"`).
-        1. Set _numberFormat_.[[CompactDisplay]] to _compactDisplay_.
+        1. If _notation_ is `"compact"`, then
+          1. Set _numberFormat_.[[CompactDisplay]] to _compactDisplay_.
         1. Let _useGrouping_ be ? GetOption(_options_, `"useGrouping"`, `"boolean"`, *undefined*, *true*).
         1. Set _numberFormat_.[[UseGrouping]] to _useGrouping_.
         1. Let _signDisplay_ be ? GetOption(_options_, `"signDisplay"`, `"string"`, &laquo; `"auto"`, `"never"`, `"always"`, `"except-zero"` &raquo;, `"auto"`).
@@ -548,7 +549,7 @@
           1. Set _intlObj_.[[CurrencyDisplay]] to _currencyDisplay_.
           1. Set _intlObj_.[[CurrencySign]] to _currencySign_.
         1. If _style_ is `"percent"`, then
-          1. Let _unit_ be `"concentr-percent"`.
+          1. Let _unit_ be `"percent"`.
         1. If _style_ is `"unit"` or `"percent"`, then
           1. If _unit_ is *undefined*, throw a *TypeError* exception.
           1. If the result of IsWellFormedUnitIdentifier(_unit_) is *false*, throw a *RangeError* exception.
