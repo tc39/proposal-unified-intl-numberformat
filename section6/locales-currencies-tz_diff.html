@@ -158,6 +158,7 @@
   </emu-clause>
 
   <ins class="block">
+
   <emu-clause id="sec-measurement-unit-identifiers">
     <h1>Measurement Unit Identifiers</h1>
 
@@ -179,8 +180,6 @@
       <emu-alg>
         1. If the result of IsSanctionedSimpleUnitIdentifier(_unitIdentifier_) is *true*, then
           1. Return *true*.
-        1. If the result of IsSanctionedCompoundUnitIdentifier(_unitIdentifier_) is *true*, then
-          1. Return *true*.
         1. If the substring `"-per-"` does not occur exactly once in _unitIdentifier_, then
           1. Return *false*.
         1. Let _numerator_ be the substring of _unitIdentifier_ from the beginning to just before `"-per-"`.
@@ -197,175 +196,55 @@
       <h1>IsSanctionedSimpleUnitIdentifier ( _unitIdentifier_ )</h1>
 
       <p>
-        The IsSanctionedSimpleUnitIdentifier abstract operation verifies that the given core unit identifier is among the simple units sanctioned in the current version of the ECMAScript standard, based on the Validity Data as described in UTS #35, Part 1, Section 3.11; the list may change over time. As discussed in UTS #35, a simple unit is one that does not have a numerator and denominator. The following steps are taken:
+        The IsSanctionedSimpleUnitIdentifier abstract operation verifies that the given core unit identifier is among the simple units sanctioned in the current version of the ECMAScript standard, a subset of the Validity Data as described in UTS #35, Part 1, Section 3.11; the list may grow over time. As discussed in UTS #35, a simple unit is one that does not have a numerator and denominator. The following steps are taken:
       </p>
 
       <emu-alg>
         1. If _unitIdentifier_ is in the following list, return *true*.
         <ul>
-          <li>acre-foot</li>
           <li>acre</li>
-          <li>ampere</li>
-          <li>arc-minute</li>
-          <li>arc-second</li>
-          <li>astronomical-unit</li>
-          <li>atmosphere</li>
           <li>bit</li>
-          <li>bushel</li>
           <li>byte</li>
-          <li>calorie</li>
-          <li>carat</li>
           <li>celsius</li>
-          <li>centiliter</li>
           <li>centimeter</li>
-          <li>century</li>
-          <li>cubic-centimeter</li>
-          <li>cubic-foot</li>
-          <li>cubic-inch</li>
-          <li>cubic-kilometer</li>
-          <li>cubic-meter</li>
-          <li>cubic-mile</li>
-          <li>cubic-yard</li>
-          <li>cup-metric</li>
-          <li>cup</li>
-          <li>day-person</li>
           <li>day</li>
-          <li>deciliter</li>
-          <li>decimeter</li>
           <li>degree</li>
           <li>fahrenheit</li>
-          <li>fathom</li>
-          <li>fluid-ounce</li>
-          <li>foodcalorie</li>
           <li>foot</li>
-          <li>furlong</li>
-          <li>g-force</li>
-          <li>gallon-imperial</li>
-          <li>gallon</li>
-          <li>generic</li>
           <li>gigabit</li>
           <li>gigabyte</li>
-          <li>gigahertz</li>
-          <li>gigawatt</li>
           <li>gram</li>
           <li>hectare</li>
-          <li>hectoliter</li>
-          <li>hectopascal</li>
-          <li>hertz</li>
-          <li>horsepower</li>
           <li>hour</li>
-          <li>inch-hg</li>
           <li>inch</li>
-          <li>joule</li>
-          <li>karat</li>
-          <li>kelvin</li>
           <li>kilobit</li>
           <li>kilobyte</li>
-          <li>kilocalorie</li>
           <li>kilogram</li>
-          <li>kilohertz</li>
-          <li>kilojoule</li>
           <li>kilometer</li>
-          <li>kilowatt-hour</li>
-          <li>kilowatt</li>
-          <li>knot</li>
-          <li>light-year</li>
-          <li>liter</li>
-          <li>lux</li>
           <li>megabit</li>
           <li>megabyte</li>
-          <li>megahertz</li>
-          <li>megaliter</li>
-          <li>megawatt</li>
           <li>meter</li>
-          <li>metric-ton</li>
-          <li>microgram</li>
-          <li>micrometer</li>
-          <li>microsecond</li>
-          <li>mile-scandinavian</li>
           <li>mile</li>
-          <li>milliampere</li>
-          <li>millibar</li>
-          <li>milligram</li>
-          <li>milliliter</li>
-          <li>millimeter-of-mercury</li>
+          <li>mile-scandinavian</li>
           <li>millimeter</li>
           <li>millisecond</li>
-          <li>milliwatt</li>
           <li>minute</li>
-          <li>month-person</li>
           <li>month</li>
-          <li>nanometer</li>
-          <li>nanosecond</li>
-          <li>nautical-mile</li>
-          <li>ohm</li>
-          <li>ounce-troy</li>
           <li>ounce</li>
-          <li>parsec</li>
           <li>percent</li>
-          <li>permille</li>
           <li>petabyte</li>
-          <li>picometer</li>
-          <li>pint-metric</li>
-          <li>pint</li>
-          <li>point</li>
           <li>pound</li>
-          <li>quart</li>
-          <li>radian</li>
-          <li>revolution</li>
           <li>second</li>
-          <li>square-centimeter</li>
-          <li>square-foot</li>
-          <li>square-inch</li>
-          <li>square-kilometer</li>
-          <li>square-meter</li>
-          <li>square-mile</li>
-          <li>square-yard</li>
           <li>stone</li>
-          <li>tablespoon</li>
-          <li>teaspoon</li>
           <li>terabit</li>
           <li>terabyte</li>
-          <li>ton</li>
-          <li>volt</li>
-          <li>watt</li>
-          <li>week-person</li>
           <li>week</li>
           <li>yard</li>
-          <li>year-person</li>
           <li>year</li>
         </ul>
         1. Return *false*.
       </emu-alg>
     </emu-clause>
-
-    <emu-clause id="sec-issanctionedcompoundunitidentifier" aoid="IsSanctionedCompoundUnitIdentifier">
-      <h1>IsSanctionedCompoundUnitIdentifier ( _unitIdentifier_ )</h1>
-
-      <p>
-        The IsSanctionedCompoundUnitIdentifier abstract operation verifies that the given core unit identifier is among the compound units sanctioned in the current version of the ECMAScript standard, based on the Validity Data as described in UTS #35, Part 1, Section 3.11; the list may change over time. As discussed in UTS #35, a compound unit is one has a numerator and denominator. The following steps are taken:
-      </p>
-
-      <emu-alg>
-        1. If _unitIdentifier_ is in the following list, return *true*.
-        <ul>
-          <li>kilometer-per-hour</li>
-          <li>liter-per-100kilometers</li>
-          <li>liter-per-kilometer</li>
-          <li>meter-per-second-squared</li>
-          <li>meter-per-second</li>
-          <li>mile-per-gallon-imperial</li>
-          <li>mile-per-gallon</li>
-          <li>mile-per-hour</li>
-          <li>milligram-per-deciliter</li>
-          <li>millimole-per-liter</li>
-          <li>part-per-million</li>
-          <li>pound-per-square-inch</li>
-        </ul>
-        1. Return *false*.
-      </emu-alg>
-    </emu-clause>
-
   </emu-clause>
   </ins>
 
