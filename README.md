@@ -1,6 +1,8 @@
 Intl.NumberFormat Unified API Proposal
 ======================================
 
+This proposal adds **measurement units**, **compact decimal notation**, and other localized number formatting features to Intl.NumberFormat.
+
 [TC39 Stage 2 Proposal](https://docs.google.com/presentation/d/1_1D15PWniTlbLu1BOU9aDf5H87Ecq85i0CuLl5KA4DE/edit?usp=sharing)
 
 [TC39 Stage 3 Proposal](https://docs.google.com/presentation/d/1BljVP4ENAqJt3CLXKapq_39Gr5RG6f1h9SQ_tsP7V8Y/edit?usp=sharing)
@@ -25,26 +27,7 @@ Rather than complicate `Intl` with more constructors with heavilly overlapping f
 
 Additional background: [prior discussion](https://github.com/tc39/ecma402/issues/215)
 
-## I. Spec Cleanup
-
-Certain sections of the spec have been refactored with the following objectives:
-
-- Fix https://github.com/tc39/ecma402/issues/238 (currency long name has dependency on plural form, and the currency long name pattern has dependency on currencyWidth).
-- Move pattern resolution out of the constructor to keep all internal fields of NumberFormat locale-agnostic, making it easier to reason about behavior in the format method.
-- Fix https://github.com/tc39/proposal-unified-intl-numberformat/issues/2, to allow minimumIntegerDigits to control integer digit count when significant digits are used.
-
-In addition, one missing option is added to the existing `currencyDisplay` setting: "narrow-symbol", which uses the CLDR narrow-format symbol:
-
-```javascript
-(100).toLocaleString("en-CA", {
-    style: "currency",
-    currency: "USD",
-    currencyDisplay: "narrow-symbol"
-});
-// ==> "$100" (rather than "US$100")
-```
-
-## II. Units
+## I. Units
 
 Units of measurement can be formatted as follows:
 
@@ -63,7 +46,7 @@ The syntax was discussed in #3.
 - `unit` receives a string core unit identifier, defined in [UTS #35, Part 2, Section 6](http://unicode.org/reports/tr35/tr35-general.html#Unit_Elements).  See also the [full list of unit identifiers](https://unicode.org/repos/cldr/tags/latest/common/validity/unit.xml).
 - `unitDisplay`, named after the corresponding setting for currencies, `currencyDisplay`, takes either "narrow", "short", or "long".
 
-## III. Scientific and Compact Notation
+## II. Scientific and Compact Notation
 
 Scientific and compact notation are represented by the new option `notation` and can be formatted as follows:
 
@@ -107,7 +90,7 @@ Notation styles are allowed to be combined with other options:
 // ==> 3.00E8 m/s
 ```
 
-## IV. Sign Display
+## III. Sign Display
 
 The sign can be displayed on positive numbers:
 
@@ -163,5 +146,24 @@ As usual, this may be combined with other options.
     signDisplay: "except-zero"
 });
 // ==> +55%
+```
+
+## IV. Spec Cleanup
+
+Certain sections of the spec have been refactored with the following objectives:
+
+- Fix https://github.com/tc39/ecma402/issues/238 (currency long name has dependency on plural form, and the currency long name pattern has dependency on currencyWidth).
+- Move pattern resolution out of the constructor to keep all internal fields of NumberFormat locale-agnostic, making it easier to reason about behavior in the format method.
+- Fix https://github.com/tc39/proposal-unified-intl-numberformat/issues/2, to allow minimumIntegerDigits to control integer digit count when significant digits are used.
+
+In addition, one missing option is added to the existing `currencyDisplay` setting: "narrow-symbol", which uses the CLDR narrow-format symbol:
+
+```javascript
+(100).toLocaleString("en-CA", {
+    style: "currency",
+    currency: "USD",
+    currencyDisplay: "narrow-symbol"
+});
+// ==> "$100" (rather than "US$100")
 ```
 
