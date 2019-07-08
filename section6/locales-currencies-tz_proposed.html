@@ -208,7 +208,9 @@
           <li>day</li>
           <li>degree</li>
           <li>fahrenheit</li>
+          <li>fluid-ounce</li>
           <li>foot</li>
+          <li>gallon</li>
           <li>gigabit</li>
           <li>gigabyte</li>
           <li>gram</li>
@@ -219,12 +221,14 @@
           <li>kilobyte</li>
           <li>kilogram</li>
           <li>kilometer</li>
+          <li>liter</li>
           <li>megabit</li>
           <li>megabyte</li>
           <li>meter</li>
           <li>mile</li>
           <li>mile-scandinavian</li>
           <li>millimeter</li>
+          <li>milliliter</li>
           <li>millisecond</li>
           <li>minute</li>
           <li>month</li>
@@ -239,6 +243,23 @@
           <li>week</li>
           <li>yard</li>
           <li>year</li>
+        </ul>
+        1. Return *false*.
+      </emu-alg>
+    </emu-clause>
+
+    <emu-clause id="sec-issanctionedcompoundunitidentifier" aoid="IsSanctionedCompoundUnitIdentifier">
+      <h1>IsSanctionedCompoundUnitIdentifier ( _unitIdentifier_ )</h1>
+
+      <p>
+        The IsSanctionedCompoundUnitIdentifier abstract operation verifies that the given core unit identifier is among the compound units sanctioned in the current version of the ECMAScript standard, a subset of the Validity Data as described in UTS #35, Part 1, Section 3.11; the list may grow over time. This list contains only compound units in which either the numerator or the denominator is not itself a sanctioned simple unit. The following steps are taken:
+      </p>
+
+      <emu-alg>
+        1. If _unitIdentifier_ is in the following list, return *true*.
+        <ul>
+          <li>liter-per-100kilometers</li>
+          <li>mile-per-gallon-imperial</li>
         </ul>
         1. Return *false*.
       </emu-alg>
