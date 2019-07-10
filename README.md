@@ -34,10 +34,10 @@ Units of measurement can be formatted as follows:
 ```javascript
 (9.81).toLocaleString("en-US", {
     style: "unit",
-    unit: "meter-per-second-squared",
+    unit: "meter-per-second",
     unitDisplay: "short"
 });
-// ==> "9.81 m/s²"
+// ==> "9.81 m/s"
 ```
 
 The syntax was discussed in #3.
