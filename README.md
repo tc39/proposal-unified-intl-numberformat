@@ -133,10 +133,10 @@ Examples of signDisplay choices with Latin digits when `currencySign` is "accoun
 
 signDisplay | -1     | -0     | 0      | 1
 ----------- | ------ | ------ | ------ | ------
-auto        | (1.00) | (0.00) | 0.00   | 1.00
-always      | (1.00) | (0.00) | +0.00  | +1.00
-never       | 1.00   | 0.00   | 0.00   | 1.00
-except-zero | (1.00) | (0.00) | 0.00   | +1.00
+auto        | ($1.00) | ($0.00) | $0.00   | $1.00
+always      | ($1.00) | ($0.00) | +$0.00  | +$1.00
+never       | $1.00   | $0.00   | $0.00   | $1.00
+except-zero | ($1.00) | ($0.00) | $0.00   | +$1.00
 
 As usual, this may be combined with other options.
 
