@@ -85,7 +85,7 @@ Notation styles are allowed to be combined with other options:
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
     style: "unit",
-    unit: "speed-meter-per-second"
+    unit: "meter-per-second"
 });
 // ==> 3.00E8 m/s
 ```
