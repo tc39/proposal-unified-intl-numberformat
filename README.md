@@ -43,8 +43,24 @@ Units of measurement can be formatted as follows:
 The syntax was discussed in #3.
 
 - `style` receives the string value "unit"
-- `unit` receives a string core unit identifier, defined in [UTS #35, Part 2, Section 6](http://unicode.org/reports/tr35/tr35-general.html#Unit_Elements).  See also the [full list of unit identifiers](https://unicode.org/repos/cldr/tags/latest/common/validity/unit.xml).
+- `unit` receives a string core unit identifier, defined in [UTS #35, Part 2, Section 6](http://unicode.org/reports/tr35/tr35-general.html#Unit_Elements).  A [subset](https://tc39.es/proposal-unified-intl-numberformat/section6/locales-currencies-tz_proposed_out.html#sec-issanctionedsimpleunitidentifier) of units from the [full list](https://unicode.org/repos/cldr/tags/latest/common/validity/unit.xml) was selected for use in ECMAScript; see a discussion on the methodology for choosing the subset in #39.
 - `unitDisplay`, named after the corresponding setting for currencies, `currencyDisplay`, takes either "narrow", "short", or "long".
+
+### Feature Detection
+
+Check for a RangeError when passing `style: "unit"`:
+
+```javascript
+let numberFormat;
+try {
+    numberFormat = new Intl.NumberFormat("en-US", {
+        style: "unit",
+        unit: "meter"
+    });
+} catch (e) {
+    // fallback behavior here
+}
+```
 
 ## II. Scientific and Compact Notation
 
@@ -88,6 +104,18 @@ Notation styles are allowed to be combined with other options:
     unit: "meter-per-second"
 });
 // ==> 3.00E8 m/s
+```
+
+### Feature Detection
+
+Check for the notation in `resolvedOptions()`:
+
+```javascript
+let notation = "compact";
+let numberFormat = new Intl.NumberFormat("en-US", { notation });
+if (numberFormat.resolvedOptions().notation !== notation) {
+    // fallback behavior here
+}
 ```
 
 ## III. Sign Display
@@ -146,6 +174,18 @@ As usual, this may be combined with other options.
     signDisplay: "except-zero"
 });
 // ==> +55%
+```
+
+### Feature Detection
+
+Check for the signDisplay in `resolvedOptions()`:
+
+```javascript
+let signDisplay = "always";
+let numberFormat = new Intl.NumberFormat("en-US", { signDisplay });
+if (numberFormat.resolvedOptions().signDisplay !== signDisplay) {
+    // fallback behavior here
+}
 ```
 
 ## IV. Spec Cleanup
