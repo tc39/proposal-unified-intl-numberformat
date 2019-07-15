@@ -51,20 +51,19 @@ The syntax was discussed in #3.
 Check for a RangeError when passing `style: "unit"`:
 
 ```javascript
-let numberFormat;
-try {
-    numberFormat = new Intl.NumberFormat("en-US", {
-        style: "unit",
-        unit: "meter"
+/**
+ * Returns an Intl.NumberFormat if the unit is supported,
+ * or null if unsupported.
+ */
+function getIntlNumberFormatWithUnit(unit) {
+  try {
+    return new Intl.NumberFormat(undefined, {
+      style: "unit",
+      unit
     });
-} catch (e) {
-    // Message in Chrome 75: "Value unit out of range for Intl.NumberFormat options property style"
-    if (e.message.includes("unit")) {
-        // fallback behavior here
-    } else {
-        // some other error
-        throw e;
-    }
+  } catch (e) { 
+    return null;
+  }
 }
 ```
 
@@ -117,10 +116,16 @@ Notation styles are allowed to be combined with other options:
 Check for the notation in `resolvedOptions()`:
 
 ```javascript
-let notation = "compact";
-let numberFormat = new Intl.NumberFormat("en-US", { notation });
-if (numberFormat.resolvedOptions().notation !== notation) {
-    // fallback behavior here
+/**
+ * Returns an Intl.NumberFormat if the notation is supported,
+ * or null if unsupported.
+ */
+function getIntlNumberFormatWithNotation(notation) {
+  let numberFormat = new Intl.NumberFormat("en-US", { notation });
+  if (numberFormat.resolvedOptions().notation !== notation) {
+    return null;
+  }
+  return numberFormat;
 }
 ```
 
@@ -187,10 +192,16 @@ As usual, this may be combined with other options.
 Check for the signDisplay in `resolvedOptions()`:
 
 ```javascript
-let signDisplay = "always";
-let numberFormat = new Intl.NumberFormat("en-US", { signDisplay });
-if (numberFormat.resolvedOptions().signDisplay !== signDisplay) {
-    // fallback behavior here
+/**
+ * Returns an Intl.NumberFormat if the signDisplay is supported,
+ * or null if unsupported.
+ */
+function getIntlNumberFormatWithSignDisplay(signDisplay) {
+  let numberFormat = new Intl.NumberFormat("en-US", { signDisplay });
+  if (numberFormat.resolvedOptions().signDisplay !== signDisplay) {
+    return null;
+  }
+  return numberFormat;
 }
 ```
 
@@ -218,20 +229,19 @@ In addition, one missing option is added to the existing `currencyDisplay` setti
 Check for a RangeError when passing `currencyDisplay: "narrowSymbol"`:
 
 ```javascript
-let numberFormat;
-try {
-    numberFormat = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-        currencyDisplay: "narrowSymbol"
+/**
+ * Returns an Intl.NumberFormat if narrow currency is supported,
+ * or null if unsupported.
+ */
+function getIntlNumberFormatWithNarrowCurrency(currency) {
+  try {
+    return new Intl.NumberFormat(undefined, {
+      style: "currency",
+      currency,
+      currencyDisplay: "narrowSymbol"
     });
-} catch (e) {
-    // Message in Chrome 75: "Value narrowSymbol out of range for Intl.NumberFormat options property currencyDisplay"
-    if (e.message.includes("narrowSymbol")) {
-        // fallback behavior here
-    } else {
-        // some other error
-        throw e;
-    }
+  } catch (e) { 
+    return null;
+  }
 }
 ```
