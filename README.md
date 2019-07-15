@@ -46,7 +46,7 @@ The syntax was discussed in #3.
 - `unit` receives a string core unit identifier, defined in [UTS #35, Part 2, Section 6](http://unicode.org/reports/tr35/tr35-general.html#Unit_Elements).  A [subset](https://tc39.es/proposal-unified-intl-numberformat/section6/locales-currencies-tz_proposed_out.html#sec-issanctionedsimpleunitidentifier) of units from the [full list](https://unicode.org/repos/cldr/tags/latest/common/validity/unit.xml) was selected for use in ECMAScript; see a discussion on the methodology for choosing the subset in #39.
 - `unitDisplay`, named after the corresponding setting for currencies, `currencyDisplay`, takes either "narrow", "short", or "long".
 
-### Feature Detection
+### Feature Detection: Measurement Units
 
 Check for a RangeError when passing `style: "unit"`:
 
@@ -58,7 +58,13 @@ try {
         unit: "meter"
     });
 } catch (e) {
-    // fallback behavior here
+    // Message in Chrome 75: "Value unit out of range for Intl.NumberFormat options property style"
+    if (e.message.includes("unit")) {
+        // fallback behavior here
+    } else {
+        // some other error
+        throw e;
+    }
 }
 ```
 
@@ -106,7 +112,7 @@ Notation styles are allowed to be combined with other options:
 // ==> 3.00E8 m/s
 ```
 
-### Feature Detection
+### Feature Detection: Notation
 
 Check for the notation in `resolvedOptions()`:
 
@@ -176,7 +182,7 @@ As usual, this may be combined with other options.
 // ==> +55%
 ```
 
-### Feature Detection
+### Feature Detection: Sign Display
 
 Check for the signDisplay in `resolvedOptions()`:
 
@@ -207,3 +213,25 @@ In addition, one missing option is added to the existing `currencyDisplay` setti
 // ==> "$100" (rather than "US$100")
 ```
 
+### Feature Detection: Narrow Currency Symbol
+
+Check for a RangeError when passing `currencyDisplay: "narrowSymbol"`:
+
+```javascript
+let numberFormat;
+try {
+    numberFormat = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        currencyDisplay: "narrowSymbol"
+    });
+} catch (e) {
+    // Message in Chrome 75: "Value narrowSymbol out of range for Intl.NumberFormat options property currencyDisplay"
+    if (e.message.includes("narrowSymbol")) {
+        // fallback behavior here
+    } else {
+        // some other error
+        throw e;
+    }
+}
+```
