@@ -43,7 +43,7 @@ Units of measurement can be formatted as follows:
 The syntax was discussed in #3.
 
 - `style` receives the string value "unit"
-- `unit` receives a string core unit identifier, defined in [UTS #35, Part 2, Section 6](http://unicode.org/reports/tr35/tr35-general.html#Unit_Elements).  See also the [full list of unit identifiers](https://unicode.org/repos/cldr/tags/latest/common/validity/unit.xml).
+- `unit` receives a string core unit identifier, defined in [UTS #35, Part 2, Section 6](http://unicode.org/reports/tr35/tr35-general.html#Unit_Elements).  See also the [full list of unit identifiers](https://github.com/unicode-org/cldr/blob/master/common/validity/unit.xml).
 - `unitDisplay`, named after the corresponding setting for currencies, `currencyDisplay`, takes either "narrow", "short", or "long".
 
 ## II. Scientific and Compact Notation
