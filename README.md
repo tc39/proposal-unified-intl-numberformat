@@ -32,12 +32,12 @@ Additional background: [prior discussion](https://github.com/tc39/ecma402/issues
 Units of measurement can be formatted as follows:
 
 ```javascript
-(9.81).toLocaleString("en-US", {
+(299792458).toLocaleString("en-US", {
     style: "unit",
     unit: "meter-per-second",
     unitDisplay: "short"
 });
-// ==> "9.81 m/s"
+// ==> "299,792,458 m/s"
 ```
 
 The syntax was discussed in #3.
@@ -85,7 +85,7 @@ Notation styles are allowed to be combined with other options:
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
     style: "unit",
-    unit: "speed-meter-per-second"
+    unit: "meter-per-second"
 });
 // ==> 3.00E8 m/s
 ```
