@@ -143,7 +143,7 @@ appending a minus sign.  For example:
 
 The syntax was discussed in #6:
 
-- `signDisplay`: "auto" (default), "always", "never", "except-zero"
+- `signDisplay`: "auto" (default), "always", "never", "exceptZero"
   - See examples below.
 - `currencySign`: "standard" (default), "accounting"
   - "accounting" enables the accounting format on currency values, as shown in the example above.  "standard", the default value, disables accounting formats.
@@ -155,7 +155,7 @@ signDisplay | -1  | -0  | 0   | 1
 auto        | -1  | -0  | 0   | 1
 always      | -1  | -0  | +0  | +1
 never       | 1   | 0   | 0   | 1
-except-zero | -1  | -0  | 0   | +1
+exceptZero  | -1  | -0  | 0   | +1
 
 Examples of signDisplay choices with Latin digits when `currencySign` is "accounting":
 
@@ -164,14 +164,14 @@ signDisplay | -1     | -0     | 0      | 1
 auto        | ($1.00) | ($0.00) | $0.00   | $1.00
 always      | ($1.00) | ($0.00) | +$0.00  | +$1.00
 never       | $1.00   | $0.00   | $0.00   | $1.00
-except-zero | ($1.00) | ($0.00) | $0.00   | +$1.00
+exceptZero  | ($1.00) | ($0.00) | $0.00   | +$1.00
 
 As usual, this may be combined with other options.
 
 ```javascript
 (0.55).toLocaleString("en-US", {
     style: "percent",
-    signDisplay: "except-zero"
+    signDisplay: "exceptZero"
 });
 // ==> +55%
 ```
@@ -196,13 +196,13 @@ Certain sections of the spec have been refactored with the following objectives:
 - Move pattern resolution out of the constructor to keep all internal fields of NumberFormat locale-agnostic, making it easier to reason about behavior in the format method.
 - Fix https://github.com/tc39/proposal-unified-intl-numberformat/issues/2, to allow minimumIntegerDigits to control integer digit count when significant digits are used.
 
-In addition, one missing option is added to the existing `currencyDisplay` setting: "narrow-symbol", which uses the CLDR narrow-format symbol:
+In addition, one missing option is added to the existing `currencyDisplay` setting: "narrowSymbol", which uses the CLDR narrow-format symbol:
 
 ```javascript
 (100).toLocaleString("en-CA", {
     style: "currency",
     currency: "USD",
-    currencyDisplay: "narrow-symbol"
+    currencyDisplay: "narrowSymbol"
 });
 // ==> "$100" (rather than "US$100")
 ```
