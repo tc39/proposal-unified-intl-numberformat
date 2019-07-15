@@ -246,15 +246,15 @@
           1. Else if _p_ is equal to `"percentSign"`, then
             1. Let _percentSignSymbol_ be the ILND String representing the percent sign.
             1. Append a new Record { [[Type]]: `"percentSign"`, [[Value]]: _percentSignSymbol_ } as the last element of _result_.
-          1. Else if _p_ is equal to `"unitSymbol"` and _numberFormat_.[[Style]] is `"unit"` or `"percent"`, then
+          1. Else if _p_ is equal to `"unitSymbol"` and _numberFormat_.[[Style]] is `"unit"`, then
             1. Let _unit_ be _numberFormat_.[[Unit]].
             1. Let _mu_ be an ILD string representing _unit_ in short form, which may depend on _x_ in languages having different plural forms.
             1. Append a new Record { [[Type]]: `"unit"`, [[Value]]: _mu_ } as the last element of _result_.
-          1. Else if _p_ is equal to `"unitNarrowSymbol"` and _numberFormat_.[[Style]] is `"unit"` or `"percent"`, then
+          1. Else if _p_ is equal to `"unitNarrowSymbol"` and _numberFormat_.[[Style]] is `"unit"`, then
             1. Let _unit_ be _numberFormat_.[[Unit]].
             1. Let _mu_ be an ILD string representing _unit_ in narrow form, which may depend on _x_ in languages having different plural forms.
             1. Append a new Record { [[Type]]: `"unit"`, [[Value]]: _mu_ } as the last element of _result_.
-          1. Else if _p_ is equal to `"unitName"` and _numberFormat_.[[Style]] is `"unit"` or `"percent"`, then
+          1. Else if _p_ is equal to `"unitName"` and _numberFormat_.[[Style]] is `"unit"`, then
             1. Let _unit_ be _numberFormat_.[[Unit]].
             1. Let _mu_ be an ILD string representing _unit_ in long form, which may depend on _x_ in languages having different plural forms.
             1. Append a new Record { [[Type]]: `"unit"`, [[Value]]: _mu_ } as the last element of _result_.
@@ -548,9 +548,7 @@
           1. Set _intlObj_.[[Currency]] to _currency_.
           1. Set _intlObj_.[[CurrencyDisplay]] to _currencyDisplay_.
           1. Set _intlObj_.[[CurrencySign]] to _currencySign_.
-        1. If _style_ is `"percent"`, then
-          1. Let _unit_ be `"percent"`.
-        1. If _style_ is `"unit"` or `"percent"`, then
+        1. If _style_ is `"unit"`, then
           1. If _unit_ is *undefined*, throw a *TypeError* exception.
           1. If the result of IsWellFormedUnitIdentifier(_unit_) is *false*, throw a *RangeError* exception.
           1. Set _intlObj_.[[Unit]] to _unit_.
@@ -570,7 +568,9 @@
         1. Let _patterns_ be _dataLocaleData_.[[patterns]].
         1. Assert: _patterns_ is a record (see <emu-xref href="#sec-intl.numberformat-internal-slots"></emu-xref>).
         1. Let _style_ be _numberFormat_.[[Style]].
-        1. If _style_ is `"unit"` or `"percent"`, then
+        1. If _style_ is `"percent"`, then
+          1. Let _patterns_ be _patterns_.[[`"percent"`]].
+        1. Else If _style_ is `"unit"`, then
           1. Let _unit_ be _numberFormat_.[[Unit]].
           1. Let _unitDisplay_ be _numberFormat_.[[UnitDisplay]].
           1. Let _patterns_ be _patterns_.[[`"unit"`]].
@@ -752,10 +752,10 @@
 
       <ul>
         <li>The list that is the value of the `"nu"` field of any locale field of [[LocaleData]] must not include the values `"native"`, `"traditio"`, or `"finance"`.</li>
-        <li>[[LocaleData]][locale] must have a patterns field for all locale values. The value of this field must be a Record, which must have three fields: `"decimal"`, `"currency"`, and `"unit"`.</li>
+        <li>[[LocaleData]][locale] must have a patterns field for all locale values. The value of this field must be a Record, which must have fields with the names of the four number format styles: `"decimal"`, `"percent"`, `"currency"`, and `"unit"`.</li>
         <li>The two fields `"currency"` and `"unit"` noted above must be Records with at least one field, `"fallback"`. The `"currency"` may have additional fields with keys corresponding to currency codes according to <emu-xref href="#sec-currency-codes"></emu-xref>.  Each field of `"currency"` must be a Record with fields corresponding to the possible currencyDisplay values: `"code"`, `"symbol"`, `"narrowSymbol"`, and `"name"`.  Each of those fields must contain a Record with fields corresponding to the possible currencySign values: `"standard"` or `"accounting"`. The `"unit"` field (of [[LocaleData]][locale]) may have additional fields beyond the required field `"fallback"` with keys corresponding to core measurement unit identifiers corresponding to <emu-xref href="#sec-measurement-unit-identifiers"></emu-xref>.  Each field of `"unit"` must be a Record with fields corresponding to the possible unitDisplay values: `"narrow"`, `"short"`, and `"long"`.</li>
-        <li>All of the leaf fields so far described for the patterns tree (`"decimal"`, great-grandchildren of `"currency"`, and grandchildren of `"unit"`) must be Records with fields corresponding to the possible signDisplay values: `"auto"`, `"always"`, `"never"`, and `"exceptZero"`.  Each of these fields must be a Record with the keys `"standard"`, `"scientific"`, `"compactShort"`, and `"compactLong"`.  Each of these fields must be a Record with the keys `"positivePattern"`, `"zeroPattern"`, and `"negativePattern"`.</li>
-        <li>The value of the aforementioned fields (the sign-dependent pattern fields) must be string values that must contain the substring `"{number}"` and may contain the substrings `"{plusSign}"`, `"{minusSign}"`, `"{compactSymbol}"`, `"{compactName}"`, `"{scientificSeparator}"`, and `"{scientificExponent}"`; the values within the `"currency"` field must also contain one of the following substrings: `"{currencyCode}"`, `"{currencySymbol}"`, `"{currencyNarrowSymbol}"`, or `"{currencyName}"`; and the values within the `"unit"` field must also contain one of the following substrings: `"{percentSign}"`, `"{unitSymbol}"`, `"{unitNarrowSymbol}"`, or `"{unitName}"`. The pattern strings must not contain any characters in the General Category "Number, decimal digit" as specified by the Unicode Standard.</li>
+        <li>All of the leaf fields so far described for the patterns tree (`"decimal"`, `"percent"`, great-grandchildren of `"currency"`, and grandchildren of `"unit"`) must be Records with fields corresponding to the possible signDisplay values: `"auto"`, `"always"`, `"never"`, and `"exceptZero"`.  Each of these fields must be a Record with the keys `"standard"`, `"scientific"`, `"compactShort"`, and `"compactLong"`.  Each of these fields must be a Record with the keys `"positivePattern"`, `"zeroPattern"`, and `"negativePattern"`.</li>
+        <li>The value of the aforementioned fields (the sign-dependent pattern fields) must be string values that must contain the substring `"{number}"` and may contain the substrings `"{plusSign}"`, `"{minusSign}"`, `"{compactSymbol}"`, `"{compactName}"`, `"{scientificSeparator}"`, and `"{scientificExponent}"`; the values within the `"percent"` field must also contain the substring `"{percentSign}"`; the values within the `"currency"` field must also contain one of the following substrings: `"{currencyCode}"`, `"{currencySymbol}"`, `"{currencyNarrowSymbol}"`, or `"{currencyName}"`; and the values within the `"unit"` field must also contain one of the following substrings: `"{unitSymbol}"`, `"{unitNarrowSymbol}"`, or `"{unitName}"`. The pattern strings must not contain any characters in the General Category "Number, decimal digit" as specified by the Unicode Standard.</li>
       </ul>
 
       <emu-note>
@@ -955,8 +955,8 @@
       <li>[[Currency]] is a String value with the currency code identifying the currency to be used if formatting with the `"currency"` unit type. It is only used when [[Style]] has the value `"currency"`.</li>
       <li>[[CurrencyDisplay]] is one of the String values `"code"`, `"symbol"`, `"narrowSymbol"`, or `"name"`, specifying whether to display the currency as an ISO 4217 alphabetic currency code, a localized currency symbol, or a localized currency name if formatting with the `"currency"` style. It is only used when [[Style]] has the value `"currency"`.</li>
       <li>[[CurrencySign]] is one of the String values `"standard"` or `"accounting"`, specifying whether to render negative numbers in accounting format, often signified by parenthesis. It is only used when [[Style]] has the value `"currency"` and when [[SignDisplay]] is not `"never"`.</li>
-      <li>[[Unit]] is a core unit identifier, as defined by Unicode Technical Standard #35, Part 2, Section 6. It is only used when [[Style]] has the value `"unit"` or `"percent"`.</li>
-      <li>[[UnitDisplay]] is one of the String values `"short"`, `"narrow"`, or `"long"`, specifying whether to display the unit as a symbol, narrow symbol, or localized long name if formatting with the `"unit"` or `"percent"` style. It is only used when [[Style]] has the value `"unit"` or `"percent"`.</li>
+      <li>[[Unit]] is a core unit identifier, as defined by Unicode Technical Standard #35, Part 2, Section 6. It is only used when [[Style]] has the value `"unit"`.</li>
+      <li>[[UnitDisplay]] is one of the String values `"short"`, `"narrow"`, or `"long"`, specifying whether to display the unit as a symbol, narrow symbol, or localized long name if formatting with the `"unit"` style. It is only used when [[Style]] has the value `"unit"`.</li>
       <li>[[MinimumIntegerDigits]] is a non-negative integer Number value indicating the minimum integer digits to be used. Numbers will be padded with leading zeroes if necessary.</li>
       <li>[[MinimumFractionDigits]] and [[MaximumFractionDigits]] are non-negative integer Number values indicating the minimum and maximum fraction digits to be used. Numbers will be rounded or padded with trailing zeroes if necessary. These properties are only used when [[RoundingType]] is `"fractionDigits"`.</li>
       <li>[[MinimumSignificantDigits]] and [[MaximumSignificantDigits]] are positive integer Number values indicating the minimum and maximum fraction digits to be shown. If present, the formatter uses however many fraction digits are required to display the specified number of significant digits. These properties are only used when [[RoundingType]] is `"significantDigits"`.</li>
