@@ -200,54 +200,63 @@
       </p>
 
       <emu-alg>
-        1. If _unitIdentifier_ is in the following list, return *true*.
-        <ul>
-          <li>acre</li>
-          <li>bit</li>
-          <li>byte</li>
-          <li>celsius</li>
-          <li>centimeter</li>
-          <li>day</li>
-          <li>degree</li>
-          <li>fahrenheit</li>
-          <li>fluid-ounce</li>
-          <li>foot</li>
-          <li>gallon</li>
-          <li>gigabit</li>
-          <li>gigabyte</li>
-          <li>gram</li>
-          <li>hectare</li>
-          <li>hour</li>
-          <li>inch</li>
-          <li>kilobit</li>
-          <li>kilobyte</li>
-          <li>kilogram</li>
-          <li>kilometer</li>
-          <li>liter</li>
-          <li>megabit</li>
-          <li>megabyte</li>
-          <li>meter</li>
-          <li>mile</li>
-          <li>mile-scandinavian</li>
-          <li>millimeter</li>
-          <li>milliliter</li>
-          <li>millisecond</li>
-          <li>minute</li>
-          <li>month</li>
-          <li>ounce</li>
-          <li>percent</li>
-          <li>petabyte</li>
-          <li>pound</li>
-          <li>second</li>
-          <li>stone</li>
-          <li>terabit</li>
-          <li>terabyte</li>
-          <li>week</li>
-          <li>yard</li>
-          <li>year</li>
-        </ul>
-        1. Return *false*.
+        1. If _unitIdentifier_ is listed in <emu-xref href="#table-sanctioned-simple-unit-identifiers"></emu-xref> below, return *true*.
+        1. Else, Return *false*.
       </emu-alg>
+
+      <emu-table id="table-sanctioned-simple-unit-identifiers">
+        <emu-caption>Simple units sanctioned for use in ECMAScript</emu-caption>
+        <table class="real-table">
+          <thead>
+            <tr>
+              <th>Simple Unit</th>
+            </tr>
+          </thead>
+          <tr><td>acre</td></tr>
+          <tr><td>bit</td></tr>
+          <tr><td>byte</td></tr>
+          <tr><td>celsius</td></tr>
+          <tr><td>centimeter</td></tr>
+          <tr><td>day</td></tr>
+          <tr><td>degree</td></tr>
+          <tr><td>fahrenheit</td></tr>
+          <tr><td>fluid-ounce</td></tr>
+          <tr><td>foot</td></tr>
+          <tr><td>gallon</td></tr>
+          <tr><td>gigabit</td></tr>
+          <tr><td>gigabyte</td></tr>
+          <tr><td>gram</td></tr>
+          <tr><td>hectare</td></tr>
+          <tr><td>hour</td></tr>
+          <tr><td>inch</td></tr>
+          <tr><td>kilobit</td></tr>
+          <tr><td>kilobyte</td></tr>
+          <tr><td>kilogram</td></tr>
+          <tr><td>kilometer</td></tr>
+          <tr><td>liter</td></tr>
+          <tr><td>megabit</td></tr>
+          <tr><td>megabyte</td></tr>
+          <tr><td>meter</td></tr>
+          <tr><td>mile</td></tr>
+          <tr><td>mile-scandinavian</td></tr>
+          <tr><td>millimeter</td></tr>
+          <tr><td>milliliter</td></tr>
+          <tr><td>millisecond</td></tr>
+          <tr><td>minute</td></tr>
+          <tr><td>month</td></tr>
+          <tr><td>ounce</td></tr>
+          <tr><td>percent</td></tr>
+          <tr><td>petabyte</td></tr>
+          <tr><td>pound</td></tr>
+          <tr><td>second</td></tr>
+          <tr><td>stone</td></tr>
+          <tr><td>terabit</td></tr>
+          <tr><td>terabyte</td></tr>
+          <tr><td>week</td></tr>
+          <tr><td>yard</td></tr>
+          <tr><td>year</td></tr>
+        </table>
+      </emu-table>
     </emu-clause>
   </emu-clause>
   </ins>
