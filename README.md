@@ -61,7 +61,10 @@ function getIntlNumberFormatWithUnit(unit) {
       style: "unit",
       unit
     });
-  } catch (e) { 
+  } catch (e) {
+    if (e.constructor !== RangeError) {
+      throw e;
+    }
     return null;
   }
 }
@@ -122,13 +125,10 @@ Check for the notation in `resolvedOptions()`:
  */
 function getIntlNumberFormatWithNotation(notation) {
   let numberFormat = new Intl.NumberFormat("en-US", { notation });
-  if (numberFormat.resolvedOptions().hasOwnProperty('notation') {
+  if (numberFormat.resolvedOptions().hasOwnProperty("notation")) {
     return numberFormat;
   }
   return null;
-    return null;
-  }
-  return numberFormat;
 }
 ```
 
@@ -201,10 +201,10 @@ Check for the signDisplay in `resolvedOptions()`:
  */
 function getIntlNumberFormatWithSignDisplay(signDisplay) {
   let numberFormat = new Intl.NumberFormat("en-US", { signDisplay });
-  if (numberFormat.resolvedOptions().signDisplay !== signDisplay) {
-    return null;
+  if (numberFormat.resolvedOptions().hasOwnProperty("signDisplay")) {
+    return numberFormat;
   }
-  return numberFormat;
+  return null;
 }
 ```
 
@@ -243,7 +243,10 @@ function getIntlNumberFormatWithNarrowCurrency(currency) {
       currency,
       currencyDisplay: "narrowSymbol"
     });
-  } catch (e) { 
+  } catch (e) {
+    if (e.constructor !== RangeError) {
+      throw e;
+    }
     return null;
   }
 }
