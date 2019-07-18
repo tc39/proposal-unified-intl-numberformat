@@ -122,7 +122,10 @@ Check for the notation in `resolvedOptions()`:
  */
 function getIntlNumberFormatWithNotation(notation) {
   let numberFormat = new Intl.NumberFormat("en-US", { notation });
-  if (numberFormat.resolvedOptions().notation !== notation) {
+  if (numberFormat.resolvedOptions().hasOwnProperty('notation') {
+    return numberFormat;
+  }
+  return null;
     return null;
   }
   return numberFormat;
