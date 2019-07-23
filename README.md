@@ -43,8 +43,32 @@ Units of measurement can be formatted as follows:
 The syntax was discussed in #3.
 
 - `style` receives the string value "unit"
-- `unit` receives a string core unit identifier, defined in [UTS #35, Part 2, Section 6](http://unicode.org/reports/tr35/tr35-general.html#Unit_Elements).  See also the [full list of unit identifiers](https://github.com/unicode-org/cldr/blob/master/common/validity/unit.xml).
+- `unit` receives a string core unit identifier, defined in [UTS #35, Part 2, Section 6](http://unicode.org/reports/tr35/tr35-general.html#Unit_Elements).  A [subset](https://tc39.es/proposal-unified-intl-numberformat/section6/locales-currencies-tz_proposed_out.html#sec-issanctionedsimpleunitidentifier) of units from the [full list](https://github.com/unicode-org/cldr/blob/master/common/validity/unit.xml) was selected for use in ECMAScript; see a discussion on the methodology for choosing the subset in #39.
 - `unitDisplay`, named after the corresponding setting for currencies, `currencyDisplay`, takes either "narrow", "short", or "long".
+
+### Feature Detection: Measurement Units
+
+Check for a RangeError when passing `style: "unit"`:
+
+```javascript
+/**
+ * Returns an Intl.NumberFormat if the unit is supported,
+ * or null if unsupported.
+ */
+function getIntlNumberFormatWithUnit(unit) {
+  try {
+    return new Intl.NumberFormat(undefined, {
+      style: "unit",
+      unit
+    });
+  } catch (e) {
+    if (e.constructor !== RangeError) {
+      throw e;
+    }
+    return null;
+  }
+}
+```
 
 ## II. Scientific and Compact Notation
 
@@ -88,6 +112,24 @@ Notation styles are allowed to be combined with other options:
     unit: "meter-per-second"
 });
 // ==> 3.00E8 m/s
+```
+
+### Feature Detection: Notation
+
+Check for the notation in `resolvedOptions()`:
+
+```javascript
+/**
+ * Returns an Intl.NumberFormat if the notation is supported,
+ * or null if unsupported.
+ */
+function getIntlNumberFormatWithNotation(notation) {
+  let numberFormat = new Intl.NumberFormat("en-US", { notation });
+  if (numberFormat.resolvedOptions().hasOwnProperty("notation")) {
+    return numberFormat;
+  }
+  return null;
+}
 ```
 
 ## III. Sign Display
@@ -148,6 +190,24 @@ As usual, this may be combined with other options.
 // ==> +55%
 ```
 
+### Feature Detection: Sign Display
+
+Check for the signDisplay in `resolvedOptions()`:
+
+```javascript
+/**
+ * Returns an Intl.NumberFormat if the signDisplay is supported,
+ * or null if unsupported.
+ */
+function getIntlNumberFormatWithSignDisplay(signDisplay) {
+  let numberFormat = new Intl.NumberFormat("en-US", { signDisplay });
+  if (numberFormat.resolvedOptions().hasOwnProperty("signDisplay")) {
+    return numberFormat;
+  }
+  return null;
+}
+```
+
 ## IV. Spec Cleanup
 
 Certain sections of the spec have been refactored with the following objectives:
@@ -167,3 +227,27 @@ In addition, one missing option is added to the existing `currencyDisplay` setti
 // ==> "$100" (rather than "US$100")
 ```
 
+### Feature Detection: Narrow Currency Symbol
+
+Check for a RangeError when passing `currencyDisplay: "narrowSymbol"`:
+
+```javascript
+/**
+ * Returns an Intl.NumberFormat if narrow currency is supported,
+ * or null if unsupported.
+ */
+function getIntlNumberFormatWithNarrowCurrency(currency) {
+  try {
+    return new Intl.NumberFormat(undefined, {
+      style: "currency",
+      currency,
+      currencyDisplay: "narrowSymbol"
+    });
+  } catch (e) {
+    if (e.constructor !== RangeError) {
+      throw e;
+    }
+    return null;
+  }
+}
+```
