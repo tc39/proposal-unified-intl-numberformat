@@ -94,8 +94,8 @@ Scientific and compact notation are represented by the new option `notation` and
 
 The syntax was discussed in #5.
 
-- `notation` takes either "scientific", "engineering", "compact", or "plain"
-- `compactDisplay`, used only when `notation` is "compact", takes either "short" or "long"
+- `notation` takes either "standard" (default), "scientific", "engineering", "compact"
+- `compactDisplay`, used only when `notation` is "compact", takes either "short" (default) or "long"
 
 Rounding-related settings (min/max integer/fraction digits) are applied after the number is scaled according to the chosen notation.
 
