@@ -96,7 +96,7 @@
       <h1>CurrencyDigits ( _currency_ )</h1>
 
       <p>
-        When the abstract operation CurrencyDigits is called with an argument _currency_ (which must be an upper case String value), the following steps are taken:
+        When the CurrencyDigits abstract operation is called with an argument _currency_ (which must be an upper case String value), the following steps are taken:
       </p>
 
       <emu-alg>
@@ -127,7 +127,7 @@
       <h1>FormatNumericToString ( _intlObject_, _x_ )</h1>
 
       <p>
-        The FormatNumericToString abstract operation is called with arguments _intlObject_ (which must be an object with [[RoundingType]], [[MinimumSignificantDigits]], [[MaximumSignificantDigits]], [[MinimumIntegerDigits]], [[MinimumFractionDigits]], and [[MaximumFractionDigits]] internal slots), and _x_ (which must be a Number or BigInt value), and returns a Record containing two values: _x_ as a string value with digits formatted according to the five formatting parameters in the field [[FormattedString]], and the final floating decimal value of _x_ after rounding has been performed in the field [[RoundedNumber]].
+        The FormatNumericToString abstract operation is called with arguments _intlObject_ (which must be an object with [[RoundingType]], [[MinimumSignificantDigits]], [[MaximumSignificantDigits]], [[MinimumIntegerDigits]], [[MinimumFractionDigits]], and [[MaximumFractionDigits]] internal slots), and _x_ (which must be a Number or BigInt value), and returns a Record containing two values: _x_ as a String value with digits formatted according to the five formatting parameters in the field [[FormattedString]], and the final floating decimal value of _x_ after rounding has been performed in the field [[RoundedNumber]].
       </p>
 
       <emu-alg>
@@ -258,15 +258,15 @@
             1. Append a new Record { [[Type]]: `"currency"`, [[Value]]: _cd_ } as the last element of _result_.
           1. Else if _p_ is equal to `"currencySymbol"` and _numberFormat_.[[Style]] is `"currency"`, then
             1. Let _currency_ be _numberFormat_.[[Currency]].
-            1. Let _cd_ be an ILD string representing _currency_ in short form. If the implementation does not have such a representation of _currency_, use _currency_ itself.
+            1. Let _cd_ be an ILD String value representing _currency_ in short form. If the implementation does not have such a representation of _currency_, use _currency_ itself.
             1. Append a new Record { [[Type]]: `"currency"`, [[Value]]: _cd_ } as the last element of _result_.
           1. Else if _p_ is equal to `"currencyNarrowSymbol"` and _numberFormat_.[[Style]] is `"currency"`, then
             1. Let _currency_ be _numberFormat_.[[Currency]].
-            1. Let _cd_ be an ILD string representing _currency_ in narrow form. If the implementation does not have such a representation of _currency_, use _currency_ itself.
+            1. Let _cd_ be an ILD String value representing _currency_ in narrow form. If the implementation does not have such a representation of _currency_, use _currency_ itself.
             1. Append a new Record { [[Type]]: `"currency"`, [[Value]]: _cd_ } as the last element of _result_.
           1. Else if _p_ is equal to `"currencyName"` and _numberFormat_.[[Style]] is `"currency"`, then
             1. Let _currency_ be _numberFormat_.[[Currency]].
-            1. Let _cd_ be an ILD string representing _currency_ in long form, which may depend on _x_ in languages having different plural forms. If the implementation does not have such a representation of _currency_, use _currency_ itself.
+            1. Let _cd_ be an ILD String value representing _currency_ in long form, which may depend on _x_ in languages having different plural forms. If the implementation does not have such a representation of _currency_, use _currency_ itself.
             1. Append a new Record { [[Type]]: `"currency"`, [[Value]]: _cd_ } as the last element of _result_.
           1. Else,
             1. Let _unknown_ be an ILND String based on _x_ and _p_.
@@ -394,7 +394,7 @@
         1. Let _parts_ be ? PartitionNumberPattern(_numberFormat_, _x_).
         1. Let _result_ be the empty String.
         1. For each _part_ in _parts_, do
-          1. Set _result_ to a String value produced by concatenating _result_ and _part_.[[Value]].
+          1. Set _result_ to the string-concatenation of _result_ and _part_.[[Value]].
         1. Return _result_.
       </emu-alg>
     </emu-clause>
@@ -439,14 +439,14 @@
           1. Let _m_ be the String consisting of the digits of the decimal representation of _n_ (in order, with no leading zeroes).
           1. Let _xFinal_ be _n_ × 10<sup>_e_–_p_+1</sup>.
         1. If _e_ ≥ _p_–1, then
-          1. Let _m_ be the concatenation of _m_ and _e_–_p_+1 occurrences of the character `"0"`.
+          1. Let _m_ be the string-concatenation of _m_ and _e_–_p_+1 occurrences of the character `"0"`.
           1. Let _int_ be _e_+1.
         1. Else if _e_ ≥ 0, then
-          1. Let _m_ be the concatenation of the first _e_+1 characters of _m_, the character `"."`, and the remaining _p_–(_e_+1) characters of _m_.
+          1. Let _m_ be the string-concatenation of the first _e_+1 characters of _m_, the character `"."`, and the remaining _p_–(_e_+1) characters of _m_.
           1. Let _int_ be _e_+1.
         1. Else,
           1. Assert: _e_ < 0.
-          1. Let _m_ be the concatenation of the String `"0."`, –(_e_+1) occurrences of the character `"0"`, and the string _m_.
+          1. Let _m_ be the string-concatenation of the String value `"0."`, –(_e_+1) occurrences of the character `"0"`, and _m_.
           1. Let _int_ be 1.
         1. If _m_ contains the character `"."`, and _maxPrecision_ > _minPrecision_, then
           1. Let _cut_ be _maxPrecision_ – _minPrecision_.
@@ -474,11 +474,11 @@
         1. If _f_ ≠ 0, then
           1. Let _k_ be the number of characters in _m_.
           1. If _k_ ≤ _f_, then
-            1. Let _z_ be the String consisting of _f_+1–_k_ occurrences of the character `"0"`.
-            1. Let _m_ be the concatenation of Strings _z_ and _m_.
+            1. Let _z_ be the String value consisting of _f_+1–_k_ occurrences of the character `"0"`.
+            1. Let _m_ be the string-concatenation of _z_ and _m_.
             1. Let _k_ be _f_+1.
           1. Let _a_ be the first _k_–_f_ characters of _m_, and let _b_ be the remaining _f_ characters of _m_.
-          1. Let _m_ be the concatenation of the three Strings _a_, `"."`, and _b_.
+          1. Let _m_ be the string-concatenation of _a_, `"."`, and _b_.
           1. Let _int_ be the number of characters in _a_.
         1. Else, let _int_ be the number of characters in _m_.
         1. Let _cut_ be _maxFraction_ – _minFraction_.
@@ -788,7 +788,7 @@
       <h1>Intl.NumberFormat.prototype [ @@toStringTag ]</h1>
 
       <p>
-        The initial value of the @@toStringTag property is the string value `"Object"`.
+        The initial value of the @@toStringTag property is the String value `"Object"`.
       </p>
       <p>
         This property has the attributes { [[Writable]]: *false*, [[Enumerable]]: *false*, [[Configurable]]: *true* }.
@@ -828,8 +828,7 @@
 
       <emu-alg>
         1. Let _nf_ be the *this* value.
-        1. If Type(_nf_) is not Object, throw a *TypeError* exception.
-        1. If _nf_ does not have an [[InitializedNumberFormat]] internal slot, throw a *TypeError* exception.
+        1. Perform ? RequireInternalSlot(_nf_, [[InitializedNumberFormat]]).
         1. Let _x_ be ? ToNumeric(_value_).
         1. Return ? FormatNumericToParts(_nf_, _x_).
       </emu-alg>
@@ -941,7 +940,7 @@
     <h1>Properties of Intl.NumberFormat Instances</h1>
 
     <p>
-      Intl.NumberFormat instances inherit properties from %NumberFormatPrototype%.
+      Intl.NumberFormat instances are ordinary objects that inherit properties from %NumberFormatPrototype%.
     </p>
 
     <p>
