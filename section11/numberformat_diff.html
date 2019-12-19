@@ -136,8 +136,8 @@
         1. Let _nf_ be _F_.[[NumberFormat]].
         1. Assert: Type(_nf_) is Object and _nf_ has an [[InitializedNumberFormat]] internal slot.
         1. If _value_ is not provided, let _value_ be *undefined*.
-        1. Let _x_ be ? ToNumber(_value_).
-        1. Return FormatNumber(_nf_, _x_).
+        1. Let _x_ be ? ToNumeric(_value_).
+        1. Return ? FormatNumeric(_nf_, _x_).
       </emu-alg>
 
       <p>
@@ -145,11 +145,11 @@
       </p>
     </emu-clause>
 
-    <emu-clause id="sec-formatnumberstring" aoid="FormatNumberToString">
-      <h1>FormatNumberToString ( _intlObject_, _x_ )</h1>
+    <emu-clause id="sec-formatnumberstring" aoid="FormatNumericToString">
+      <h1>FormatNumericToString ( _intlObject_, _x_ )</h1>
 
       <p>
-        The FormatNumberToString abstract operation is called with arguments _intlObject_ (which must be an object with <ins>[[RoundingType]],</ins> [[MinimumSignificantDigits]], [[MaximumSignificantDigits]], [[MinimumIntegerDigits]], [[MinimumFractionDigits]], and [[MaximumFractionDigits]] internal slots), and _x_ (which must be a Number value), and returns <ins>a Record containing two values:</ins> _x_ as a string value with digits formatted according to the five formatting parameters <ins>in the field [[FormattedString]], and the final floating decimal value of _x_ after rounding has been performed in the field [[RoundedNumber]]</ins>.
+        The FormatNumericToString abstract operation is called with arguments _intlObject_ (which must be an object with <ins>[[RoundingType]],</ins> [[MinimumSignificantDigits]], [[MaximumSignificantDigits]], [[MinimumIntegerDigits]], [[MinimumFractionDigits]], and [[MaximumFractionDigits]] internal slots), and _x_ (which must be a Number or BigInt value), and returns <ins>a Record containing two values:</ins> _x_ as a string value with digits formatted according to the five formatting parameters <ins>in the field [[FormattedString]], and the final floating decimal value of _x_ after rounding has been performed in the field [[RoundedNumber]]</ins>.
       </p>
 
       <del class="block">
@@ -193,7 +193,7 @@
       <h1>PartitionNumberPattern ( _numberFormat_, _x_ )</h1>
 
       <p>
-        The PartitionNumberPattern abstract operation is called with arguments _numberFormat_ (which must be an object initialized as a NumberFormat) and _x_ (which must be a Number value), interprets _x_ as a numeric value, and creates the corresponding parts according to the effective locale and the formatting options of _numberFormat_. The following steps are taken:
+        The PartitionNumberPattern abstract operation is called with arguments _numberFormat_ (which must be an object initialized as a NumberFormat) and _x_ (which must be a Number or BigInt value), interprets _x_ as a numeric value, and creates the corresponding parts according to the effective locale and the formatting options of _numberFormat_. The following steps are taken:
       </p>
 
       <emu-alg>
@@ -205,38 +205,32 @@
         1. <ins class="block">Let _exponent_ be 0.</ins>
         1. <ins class="block">If _x_ is *NaN*, then</ins>
           1. <ins class="block">Let _n_ be an implementation- and locale-dependent (ILD) String value indicating the *NaN* value.</ins>
-        1. <ins class="block">Else if _x_ is not a finite Number,</ins>
+        1. <ins class="block">Else if _x_ is not a finite Number or BigInt,</ins>
           1. <ins class="block">Let _n_ be an ILD String value indicating infinity.</ins>
         1. <ins class="block">Else,</ins>
           1. <ins class="block">If _numberFormat_.[[Style]] is `"percent"`, let _x_ be 100 × _x_.</ins>
           1. <ins class="block">Let _exponent_ be ComputeExponent(_numberFormat_, _x_).</ins>
           1. <ins class="block">Let _x_ be _x_ × 10<sup>-_exponent_</sup>.</ins>
-          1. <ins class="block">Let _formatNumberResult_ be FormatNumberToString(_numberFormat_, _x_).</ins>
+          1. <ins class="block">Let _formatNumberResult_ be FormatNumericToString(_numberFormat_, _x_).</ins>
           1. <ins class="block">Let _n_ be _formatNumberResult_.[[FormattedString]].</ins>
           1. <ins class="block">Let _x_ be _formatNumberResult_.[[RoundedNumber]].</ins>
         1. <ins class="block">Let _pattern_ be GetNumberFormatPattern(_numberFormat_, _x_, _exponent_)</ins>
         1. Let _result_ be a new empty List.
-        1. Let _beginIndex_ be Call(%StringProto_indexOf%, _pattern_, &laquo; `"{"`, 0 &raquo;).
-        1. Let _endIndex_ be 0.
-        1. Let _nextIndex_ be 0.
-        1. Let _length_ be the number of code units in _pattern_.
-        1. Repeat, while _beginIndex_ is an integer index into _pattern_
-          1. Set _endIndex_ to Call(%StringProto_indexOf%, _pattern_, &laquo; `"}"`, _beginIndex_ &raquo;).
-          1. Assert: _endIndex_ is greater than _beginIndex_.
-          1. If _beginIndex_ is greater than _nextIndex_, then
-            1. Let _literal_ be a substring of _pattern_ from position _nextIndex_, inclusive, to position _beginIndex_, exclusive.
-            1. Append a new Record { [[Type]]: `"literal"`, [[Value]]: _literal_ } as the last element of _result_.
-          1. Let _p_ be the substring of _pattern_ from position _beginIndex_, exclusive, to position _endIndex_, exclusive.
+        1. Let _patternParts_ be PartitionPattern(_pattern_).
+        1. For each element _patternPart_ of _patternParts_, in List order, do
+          1. Let _p_ be _patternPart_.[[Type]].
+          1. If _p_ is `"literal"`, then
+            1. Add new part record { [[Type]]: `"literal"`, [[Value]]: _patternPart_.[[Value]] } as a new element of _result_.
           1. If _p_ is equal to `"number"`, then
             1. If _x_ is *NaN*, then
               1. <del class="block">Let _n_ be an implementation- and locale-dependent (ILD) String value indicating the *NaN* value.</del>
               1. Append a new Record { [[Type]]: `"nan"`, [[Value]]: _n_ } as the last element of _result_.
-            1. Else if _x_ is not a finite Number,
+            1. Else if _x_ is not a finite Number or BigInt,
               1. <del class="block">Let _n_ be an ILD String value indicating infinity.</del>
               1. Append a new Record { [[Type]]: `"infinity"`, [[Value]]: _n_ } as the last element of _result_.
             1. Else,
               1. <del class="block">If _numberFormat_.[[Style]] is `"percent"`, let _x_ be 100 × _x_.</del>
-              1. <del class="block">Let _n_ be FormatNumberToString(_numberFormat_, _x_).</del>
+              1. <del class="block">Let _n_ be FormatNumericToString(_numberFormat_, _x_).</del>
               1. If the _numberFormat_.[[NumberingSystem]] matches one of the values in the `"Numbering System"` column of <emu-xref href="#table-numbering-system-digits"></emu-xref> below, then
                 1. Let _digits_ be a List whose 10 String valued elements are the UTF-16 string representations of the 10 _digits_ specified in the `"Digits"` column of the matching row in <emu-xref href="#table-numbering-system-digits"></emu-xref>.
                 1. Replace each _digit_ in _n_ with the value of _digits_[_digit_].
@@ -329,11 +323,6 @@
           1. Else,
             1. Let _unknown_ be an ILND String based on _x_ and _p_.
             1. Append a new Record { [[Type]]: `"unknown"`, [[Value]]: _unknown_ } as the last element of _result_.
-          1. Set _nextIndex_ to _endIndex_ + 1.
-          1. Set _beginIndex_ to Call(%StringProto_indexOf%, _pattern_, &laquo; `"{"`, _nextIndex_ &raquo;).
-        1. If _nextIndex_ is less than _length_, then
-          1. Let _literal_ be the substring of _pattern_ from position _nextIndex_, inclusive, to position _length_, exclusive.
-          1. Append a new Record { [[Type]]: `"literal"`, [[Value]]: _literal_ } as the last element of _result_.
         1. Return _result_.
       </emu-alg>
 
@@ -442,15 +431,15 @@
       </emu-note>
 
       <emu-note>
-        It is recommended that implementations use the locale provided by the Common Locale Data Repository (available at <a href="http://cldr.unicode.org/">http://cldr.unicode.org/</a>).
+        It is recommended that implementations use the locale provided by the Common Locale Data Repository (available at <a href="http://cldr.unicode.org">http://cldr.unicode.org</a>).
       </emu-note>
     </emu-clause>
 
-    <emu-clause id="sec-formatnumber" aoid="FormatNumber">
-      <h1>FormatNumber( _numberFormat_, _x_ )</h1>
+    <emu-clause id="sec-formatnumber" aoid="FormatNumeric">
+      <h1>FormatNumeric( _numberFormat_, _x_ )</h1>
 
       <p>
-        The FormatNumber abstract operation is called with arguments _numberFormat_ (which must be an object initialized as a NumberFormat) and _x_ (which must be a Number value), and performs the following steps:
+        The FormatNumeric abstract operation is called with arguments _numberFormat_ (which must be an object initialized as a NumberFormat) and _x_ (which must be a Number or BigInt value), and performs the following steps:
       </p>
 
       <emu-alg>
@@ -462,11 +451,11 @@
       </emu-alg>
     </emu-clause>
 
-    <emu-clause id="sec-formatnumbertoparts" aoid="FormatNumberToParts">
-      <h1>FormatNumberToParts( _numberFormat_, _x_ )</h1>
+    <emu-clause id="sec-formatnumbertoparts" aoid="FormatNumericToParts">
+      <h1>FormatNumericToParts( _numberFormat_, _x_ )</h1>
 
       <p>
-        The FormatNumberToParts abstract operation is called with arguments _numberFormat_ (which must be an object initialized as a NumberFormat) and _x_ (which must be a Number value), and performs the following steps:
+        The FormatNumericToParts abstract operation is called with arguments _numberFormat_ (which must be an object initialized as a NumberFormat) and _x_ (which must be a Number or BigInt value), and performs the following steps:
       </p>
 
       <emu-alg>
@@ -487,7 +476,7 @@
       <h1>ToRawPrecision( _x_, _minPrecision_, _maxPrecision_ )</h1>
 
       <p>
-        When the ToRawPrecision abstract operation is called with arguments _x_ (which must be a finite non-negative number), _minPrecision_, and _maxPrecision_ (both must be integers between 1 and 21), the following steps are taken:
+        When the ToRawPrecision abstract operation is called with arguments _x_ (which must be a finite non-negative Number or BigInt), _minPrecision_, and _maxPrecision_ (both must be integers between 1 and 21), the following steps are taken:
       </p>
 
       <emu-alg>
@@ -532,7 +521,7 @@
       <h1>ToRawFixed( _x_, _minInteger_, _minFraction_, _maxFraction_ )</h1>
 
       <p>
-        When the ToRawFixed abstract operation is called with arguments _x_ (which must be a finite non-negative number), _minInteger_ (which must be an integer between 1 and 21), _minFraction_, and _maxFraction_ (which must be integers between 0 and 20), the following steps are taken:
+        When the ToRawFixed abstract operation is called with arguments _x_ (which must be a finite non-negative Number or BigInt), _minInteger_ (which must be an integer between 1 and 21), _minFraction_, and _maxFraction_ (which must be integers between 0 and 20), the following steps are taken:
       </p>
 
       <emu-alg>
@@ -712,7 +701,7 @@
         1. Let _magnitude_ be the base 10 logarithm of _x_ rounded down to the nearest integer.
         1. Let _exponent_ be ComputeExponentForMagnitude(_numberFormat_, _magnitude_).
         1. Let _x_ be _x_ × 10<sup>-_exponent_</sup>.
-        1. Let _formatNumberResult_ be FormatNumberToString(_numberFormat_, _x_).
+        1. Let _formatNumberResult_ be FormatNumericToString(_numberFormat_, _x_).
         1. If _formatNumberResult_.[[RoundedNumber]] = 0, then
           1. Return _exponent_.
         1. Let _newMagnitude_ be the base 10 logarithm of _x_ rounded down to the nearest integer.
@@ -838,14 +827,14 @@
 
       <ul>
         <li>The list that is the value of the `"nu"` field of any locale field of [[LocaleData]] must not include the values `"native"`, `"traditio"`, or `"finance"`.</li>
-        <li>[[LocaleData]][locale] must have a patterns field for all locale values. The value of this field must be a <del>record</del><ins>Record</ins>, which must have fields with the names of the <del>three</del><ins>four</ins> number format styles: `"decimal"`, `"percent"`, `"currency"`, <ins>and `"unit"`</ins>. <del>Each of these fields in turn must be a record with the fields positivePattern and negativePattern.</del></li>
-        <li><ins class="block">The two fields `"currency"` and `"unit"` noted above must be Records with at least one field, `"fallback"`. The `"currency"` may have additional fields with keys corresponding to currency codes according to <emu-xref href="#sec-currency-codes"></emu-xref>.  Each field of `"currency"` must be a Record with fields corresponding to the possible currencyDisplay values: `"code"`, `"symbol"`, `"narrowSymbol"`, and `"name"`.  Each of those fields must contain a Record with fields corresponding to the possible currencySign values: `"standard"` or `"accounting"`.  The `"unit"` field (of [[LocaleData]][locale]) may have additional fields beyond the required field `"fallback"` with keys corresponding to measurement core unit identifiers corresponding to <emu-xref href="#sec-measurement-unit-identifiers"></emu-xref>.  Each field of `"unit"` must be a Record with fields corresponding to the possible unitDisplay values: `"narrow"`, `"short"`, and `"long"`.</ins></li>
+        <li>[[LocaleData]].[[&lt;_locale_&gt;]] must have a patterns field for all locale values _locale_. The value of this field must be a <del>record</del><ins>Record</ins>, which must have fields with the names of the <del>three</del><ins>four</ins> number format styles: `"decimal"`, `"percent"`, `"currency"`, <ins>and `"unit"`</ins>. <del>Each of these fields in turn must be a record with the fields positivePattern and negativePattern.</del></li>
+        <li><ins class="block">The two fields `"currency"` and `"unit"` noted above must be Records with at least one field, `"fallback"`. The `"currency"` may have additional fields with keys corresponding to currency codes according to <emu-xref href="#sec-currency-codes"></emu-xref>.  Each field of `"currency"` must be a Record with fields corresponding to the possible currencyDisplay values: `"code"`, `"symbol"`, `"narrowSymbol"`, and `"name"`.  Each of those fields must contain a Record with fields corresponding to the possible currencySign values: `"standard"` or `"accounting"`.  The `"unit"` field (of [[LocaleData]].[[&lt;_locale_&gt;]]) may have additional fields beyond the required field `"fallback"` with keys corresponding to measurement core unit identifiers corresponding to <emu-xref href="#sec-measurement-unit-identifiers"></emu-xref>.  Each field of `"unit"` must be a Record with fields corresponding to the possible unitDisplay values: `"narrow"`, `"short"`, and `"long"`.</ins></li>
         <li><ins class="block">All of the leaf fields so far described for the patterns tree (`"decimal"`, `"percent"`, great-grandchildren of `"currency"`, and grandchildren of `"unit"`) must be Records with the keys `"standard"`, `"scientific"`, `"compactShort"`, and `"compactLong"`.  Each of these fields must be a Record with the keys `"positivePattern"`, `"zeroPattern"`, and `"negativePattern"`.</ins></li>
         <li>The value of <del>these fields</del> <ins>the aforementioned fields (the sign-dependent pattern fields)</ins> must be string values that must contain the substring `"{number}"`.  <ins>`"positivePattern"` must contain the substring `"{plusSign}"` but not `"{minusSign}"`; `"negativePattern"` must contain the substring `"{minusSign}"` but not `"{plusSign}"`; and `"zeroPattern"` must not contain either `"{plusSign}"` or `"{minusSign}"`.  Additionally, the aforementioned fields</ins> <del>and</del> may contain the substrings <del>`"{plusSign}"` and `"{minusSign}"`</del> <ins>`"{compactSymbol}"`, `"{compactName}"`, `"{scientificSeparator}"`, and `"{scientificExponent}"`</ins>; the values within the <del>percent</del><ins>`"percent"`</ins> field must also contain the substring `"{percentSign}"`; the values within the <del>currency</del><ins>`"currency"`</ins> field must also contain <del>the substring `"{currency}"`</del> <ins>one of the following substrings: `"{currencyCode}"`, `"{currencySymbol}"`, `"{currencyNarrowSymbol}"`, or `"{currencyName}"`; and the values within the `"unit"` field must also contain one of the following substrings: `"{unitSymbol}"`, `"{unitNarrowSymbol}"`, or `"{unitName}"`</ins>. The pattern strings must not contain any characters in the General Category "Number, decimal digit" as specified by the Unicode Standard.</li>
       </ul>
 
       <emu-note>
-        It is recommended that implementations use the locale data provided by the Common Locale Data Repository (available at <a href="http://cldr.unicode.org/">http://cldr.unicode.org/</a>).
+        It is recommended that implementations use the locale data provided by the Common Locale Data Repository (available at <a href="http://cldr.unicode.org">http://cldr.unicode.org</a>).
       </emu-note>
     </emu-clause>
   </emu-clause>
@@ -911,8 +900,8 @@
         1. Let _nf_ be the *this* value.
         1. If Type(_nf_) is not Object, throw a *TypeError* exception.
         1. If _nf_ does not have an [[InitializedNumberFormat]] internal slot, throw a *TypeError* exception.
-        1. Let _x_ be ? ToNumber(_value_).
-        1. Return ? FormatNumberToParts(_nf_, _x_).
+        1. Let _x_ be ? ToNumeric(_value_).
+        1. Return ? FormatNumericToParts(_nf_, _x_).
       </emu-alg>
     </emu-clause>
 
