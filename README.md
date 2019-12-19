@@ -164,21 +164,21 @@ The syntax was discussed in #6:
 
 Examples of signDisplay choices with Latin digits:
 
-signDisplay | -1  | -0  | 0   | 1
------------ | --- | --- | --- | ---
-auto        | -1  | -0  | 0   | 1
-always      | -1  | -0  | +0  | +1
-never       | 1   | 0   | 0   | 1
-exceptZero  | -1  | 0   | 0   | +1
+signDisplay | -1  | -0  | 0   | 1   | NaN
+----------- | --- | --- | --- | --- | ---
+auto        | -1  | -0  | 0   | 1   | NaN
+always      | -1  | -0  | +0  | +1  | +NaN
+never       | 1   | 0   | 0   | 1   | NaN
+exceptZero  | -1  | 0   | 0   | +1  | NaN
 
 Examples of signDisplay choices with Latin digits when `currencySign` is "accounting":
 
-signDisplay | -1     | -0     | 0      | 1
------------ | ------ | ------ | ------ | ------
-auto        | ($1.00) | ($0.00) | $0.00   | $1.00
-always      | ($1.00) | ($0.00) | +$0.00  | +$1.00
-never       | $1.00   | $0.00   | $0.00   | $1.00
-exceptZero  | ($1.00) |  $0.00  | $0.00   | +$1.00
+signDisplay | -1      | -0      | 0       | 1      | NaN
+----------- | ------ -| ------- | ------- | ------ | ----
+auto        | ($1.00) | ($0.00) | $0.00   | $1.00  | $NaN
+always      | ($1.00) | ($0.00) | +$0.00  | +$1.00 | +$NaN
+never       | $1.00   | $0.00   | $0.00   | $1.00  | $NaN
+exceptZero  | ($1.00) |  $0.00  | $0.00   | +$1.00 | $NaN
 
 As usual, this may be combined with other options.
 
