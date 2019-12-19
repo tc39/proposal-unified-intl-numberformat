@@ -169,7 +169,7 @@ signDisplay | -1  | -0  | 0   | 1
 auto        | -1  | -0  | 0   | 1
 always      | -1  | -0  | +0  | +1
 never       | 1   | 0   | 0   | 1
-exceptZero  | -1  | -0  | 0   | +1
+exceptZero  | -1  | 0   | 0   | +1
 
 Examples of signDisplay choices with Latin digits when `currencySign` is "accounting":
 
@@ -178,7 +178,7 @@ signDisplay | -1     | -0     | 0      | 1
 auto        | ($1.00) | ($0.00) | $0.00   | $1.00
 always      | ($1.00) | ($0.00) | +$0.00  | +$1.00
 never       | $1.00   | $0.00   | $0.00   | $1.00
-exceptZero  | ($1.00) | ($0.00) | $0.00   | +$1.00
+exceptZero  | ($1.00) |  $0.00  | $0.00   | +$1.00
 
 As usual, this may be combined with other options.
 
