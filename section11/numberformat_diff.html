@@ -658,8 +658,9 @@
             1. Else,
               1. Assert: _compactDisplay_ is `"long"`.
               1. Let _displayNotation_ be `"compactLong"`.
-        1. Let _patterns_ be _patterns_.[[&lt;_displayNotation_&gt;]].
         1. Let _signDisplay_ be _numberFormat_.[[SignDisplay]].
+        1. Let _patterns_ be _patterns_.[[&lt;_signDisplay_&gt;]].
+        1. Let _patterns_ be _patterns_.[[&lt;_displayNotation_&gt;]].
         1. If _signDisplay_ is `"never"`, then
           1. Let _pattern_ be _patterns_.[[zeroPattern]].
         1. Else if _signDisplay_ is `"auto"`, then
