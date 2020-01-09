@@ -9,6 +9,8 @@ This proposal adds **measurement units**, **compact decimal notation**, and othe
 
 [View Spec](https://tc39.github.io/proposal-unified-intl-numberformat/)
 
+[Polyfill](https://www.npmjs.com/package/@formatjs/intl-unified-numberformat)
+
 ## Background / Motivation
 
 There are many requests for adding number-formatting-related features to ECMA-402 (the JavaScript Intl standard library). These include:
