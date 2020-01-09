@@ -176,7 +176,7 @@ exceptZero  | -1  | 0   | 0   | +1  | NaN
 Examples of signDisplay choices with Latin digits when `currencySign` is "accounting":
 
 signDisplay | -1      | -0      | 0       | 1      | NaN
------------ | ------ -| ------- | ------- | ------ | ----
+----------- | --------| ------- | ------- | ------ | ----
 auto        | ($1.00) | ($0.00) | $0.00   | $1.00  | $NaN
 always      | ($1.00) | ($0.00) | +$0.00  | +$1.00 | +$NaN
 never       | $1.00   | $0.00   | $0.00   | $1.00  | $NaN
