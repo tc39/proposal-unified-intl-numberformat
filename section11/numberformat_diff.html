@@ -5,7 +5,7 @@
     <h1>Abstract Operations For NumberFormat Objects</h1>
 
     <emu-clause id="sec-setnfdigitoptions" aoid="SetNumberFormatDigitOptions">
-      <h1>SetNumberFormatDigitOptions ( _intlObj_, _options_, _mnfdDefault_, _mxfdDefault_ )</h1>
+      <h1>SetNumberFormatDigitOptions ( _intlObj_, _options_, _mnfdDefault_, _mxfdDefault_<ins>, _notation_</ins> )</h1>
 
       <p>
         The abstract operation SetNumberFormatDigitOptions applies digit
@@ -38,7 +38,7 @@
           1. <ins class="block">Let _mxfd_ be ? DefaultNumberOption(_mxfd_, _mnfd_, 20, _mxfdActualDefault_).</ins>
           1. <ins class="block">Set _intlObj_.[[MinimumFractionDigits]] to _mnfd_.</ins>
           1. <ins class="block">Set _intlObj_.[[MaximumFractionDigits]] to _mxfd_.</ins>
-        1. <ins class="block">Else if _intlObj_.[[Notation]] is `"compact"`, then</ins>
+        1. <ins class="block">Else if _notation_ is `"compact"`, then</ins>
           1. <ins class="block">Set _intlObj_.[[RoundingType]] to `"compactRounding"`.</ins>
         1. <ins class="block">Else,</ins>
           1. <ins class="block">Set _intlObj_.[[RoundingType]] to `"fractionDigits"`.</ins>
@@ -96,7 +96,7 @@
             1. Let _mxfdDefault_ be 3.
         1. <ins class="block">Let _notation_ be ? GetOption(_options_, `"notation"`, `"string"`, &laquo; `"standard"`, `"scientific"`, `"engineering"`, `"compact"` &raquo;, `"standard"`).</ins>
         1. <ins class="block">Set _numberFormat_.[[Notation]] to _notation_.</ins>
-        1. Perform ? SetNumberFormatDigitOptions(_numberFormat_, _options_, _mnfdDefault_, _mxfdDefault_).
+        1. Perform ? SetNumberFormatDigitOptions(_numberFormat_, _options_, _mnfdDefault_, _mxfdDefault_<ins>, _notation_</ins>).
         1. <ins class="block">Let _compactDisplay_ be ? GetOption(_options_, `"compactDisplay"`, `"string"`, &laquo; `"short"`, `"long"` &raquo;, `"short"`).</ins>
         1. <ins class="block">If _notation_ is `"compact"`, then</ins>
           1. <ins class="block">Set _numberFormat_.[[CompactDisplay]] to _compactDisplay_.</ins>

@@ -5,7 +5,7 @@
     <h1>Abstract Operations For NumberFormat Objects</h1>
 
     <emu-clause id="sec-setnfdigitoptions" aoid="SetNumberFormatDigitOptions">
-      <h1>SetNumberFormatDigitOptions ( _intlObj_, _options_, _mnfdDefault_, _mxfdDefault_ )</h1>
+      <h1>SetNumberFormatDigitOptions ( _intlObj_, _options_, _mnfdDefault_, _mxfdDefault_, _notation_ )</h1>
 
       <p>
         The abstract operation SetNumberFormatDigitOptions applies digit
@@ -35,7 +35,7 @@
           1. Let _mxfd_ be ? DefaultNumberOption(_mxfd_, _mnfd_, 20, _mxfdActualDefault_).
           1. Set _intlObj_.[[MinimumFractionDigits]] to _mnfd_.
           1. Set _intlObj_.[[MaximumFractionDigits]] to _mxfd_.
-        1. Else if _intlObj_.[[Notation]] is `"compact"`, then
+        1. Else if _notation_ is `"compact"`, then
           1. Set _intlObj_.[[RoundingType]] to `"compactRounding"`.
         1. Else,
           1. Set _intlObj_.[[RoundingType]] to `"fractionDigits"`.
@@ -80,7 +80,7 @@
             1. Let _mxfdDefault_ be 3.
         1. Let _notation_ be ? GetOption(_options_, `"notation"`, `"string"`, &laquo; `"standard"`, `"scientific"`, `"engineering"`, `"compact"` &raquo;, `"standard"`).
         1. Set _numberFormat_.[[Notation]] to _notation_.
-        1. Perform ? SetNumberFormatDigitOptions(_numberFormat_, _options_, _mnfdDefault_, _mxfdDefault_).
+        1. Perform ? SetNumberFormatDigitOptions(_numberFormat_, _options_, _mnfdDefault_, _mxfdDefault_, _notation_).
         1. Let _compactDisplay_ be ? GetOption(_options_, `"compactDisplay"`, `"string"`, &laquo; `"short"`, `"long"` &raquo;, `"short"`).
         1. If _notation_ is `"compact"`, then
           1. Set _numberFormat_.[[CompactDisplay]] to _compactDisplay_.
