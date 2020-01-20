@@ -192,7 +192,7 @@
           1. Else if _p_ is equal to *"minusSign"*, then
             1. Let _minusSignSymbol_ be the ILND String representing the minus sign.
             1. Append a new Record { [[Type]]: *"minusSign"*, [[Value]]: _minusSignSymbol_ } as the last element of _result_.
-          1. Else if _p_ is equal to *"percentSign"*, then
+          1. Else if _p_ is equal to *"percentSign"* and _numberFormat_.[[Style]] is *"percent"*, then
             1. Let _percentSignSymbol_ be the ILND String representing the percent sign.
             1. Append a new Record { [[Type]]: *"percentSign"*, [[Value]]: _percentSignSymbol_ } as the last element of _result_.
           1. Else if _p_ is equal to *"unitSymbol"* and _numberFormat_.[[Style]] is *"unit"*, then
