@@ -8,7 +8,9 @@
     "build:sec11": "ecmarkup section11/numberformat_proposed.html section11/numberformat_proposed_out.html",
     "build:sec11-diff": "ecmarkup section11/numberformat_diff.html section11/numberformat_diff_out.html",
     "build:sec13-diff": "ecmarkup section13/pluralrules_diff.html section13/pluralrules_diff_out.html",
-    "build": "npm run build:sec6 && npm run build:sec6-diff && npm run build:sec11 && npm run build:sec11-diff && npm run build:sec13-diff"
+    "build:annex": "ecmarkup annex/annexes_proposed.html annex/annexes_proposed_out.html",
+    "build:annex-diff": "ecmarkup annex/annexes_diff.html annex/annexes_diff_out.html",
+    "build": "npm run build:sec6 && npm run build:sec6-diff && npm run build:sec11 && npm run build:sec11-diff && npm run build:sec13-diff && npm run build:annex && npm run build:annex-diff"
   },
   "homepage": "https://github.com/tc39/template-for-proposals#readme",
   "repository": {
