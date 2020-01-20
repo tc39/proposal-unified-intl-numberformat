@@ -183,7 +183,7 @@
           1. Let _p_ be _patternPart_.[[Type]].
           1. If _p_ is *"literal"*, then
             1. Add new part record { [[Type]]: *"literal"*, [[Value]]: _patternPart_.[[Value]] } as a new element of _result_.
-          1. Else If _p_ is equal to *"number"*, then
+          1. Else if _p_ is equal to *"number"*, then
             1. Let _notationSubParts_ be PartitionNotationSubPattern(_numberFormat_, _x_, _n_, _exponent_).
             1. Append all elements of _notationSubParts_ to _result_.
           1. Else if _p_ is equal to *"plusSign"*, then
@@ -648,7 +648,7 @@
           1. Assert: _notation_ is *"compact"*.
           1. Let _compactDisplay_ be _numberFormat_.[[CompactDisplay]].
           1. Let _compactPatterns_ be _notationSubPatterns_.[[compact]].[[&gt;_compactDisplay_&lt;]].
-          1. Return _compactPatterns_[[_exponent_]].
+          1. Return _compactPatterns_.[[_exponent_]].
         1. Else,
           1. Return *"{number}"*.
       </emu-alg>
