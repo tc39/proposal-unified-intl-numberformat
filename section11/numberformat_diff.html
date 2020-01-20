@@ -26,22 +26,22 @@
         1. <del class="block">Set _intlObj_.[[MinimumFractionDigits]] to _mnfd_.</del>
         1. <del class="block">Set _intlObj_.[[MaximumFractionDigits]] to _mxfd_.</del>
         1. If _mnsd_ is not *undefined* or _mxsd_ is not *undefined*, then
-          1. <ins class="block">Set _intlObj_.[[RoundingType]] to *"significantDigits"*.</ins>
+          1. <ins class="block">Set _intlObj_.[[RoundingType]] to ~significantDigits~.</ins>
           1. Let _mnsd_ be ? DefaultNumberOption(_mnsd_, 1, 21, 1).
           1. Let _mxsd_ be ? DefaultNumberOption(_mxsd_, _mnsd_, 21, 21).
           1. Set _intlObj_.[[MinimumSignificantDigits]] to _mnsd_.
           1. Set _intlObj_.[[MaximumSignificantDigits]] to _mxsd_.
         1. <ins class="block">Else if _mnfd_ is not *undefined* or _mxfd_ is not *undefined*, then</ins>
-          1. <ins class="block">Set _intlObj_.[[RoundingType]] to *"fractionDigits"*.</ins>
+          1. <ins class="block">Set _intlObj_.[[RoundingType]] to ~fractionDigits~.</ins>
           1. <ins class="block">Let _mnfd_ be ? DefaultNumberOption(_mnfd_, 0, 20, _mnfdDefault_).</ins>
           1. <ins class="block">Let _mxfdActualDefault_ be max( _mnfd_, _mxfdDefault_ ).</ins>
           1. <ins class="block">Let _mxfd_ be ? DefaultNumberOption(_mxfd_, _mnfd_, 20, _mxfdActualDefault_).</ins>
           1. <ins class="block">Set _intlObj_.[[MinimumFractionDigits]] to _mnfd_.</ins>
           1. <ins class="block">Set _intlObj_.[[MaximumFractionDigits]] to _mxfd_.</ins>
         1. <ins class="block">Else if _notation_ is *"compact"*, then</ins>
-          1. <ins class="block">Set _intlObj_.[[RoundingType]] to *"compactRounding"*.</ins>
+          1. <ins class="block">Set _intlObj_.[[RoundingType]] to ~compactRounding~.</ins>
         1. <ins class="block">Else,</ins>
-          1. <ins class="block">Set _intlObj_.[[RoundingType]] to *"fractionDigits"*.</ins>
+          1. <ins class="block">Set _intlObj_.[[RoundingType]] to ~fractionDigits~.</ins>
           1. <ins class="block">Set _intlObj_.[[MinimumFractionDigits]] to _mnfdDefault_.</ins>
           1. <ins class="block">Set _intlObj_.[[MaximumFractionDigits]] to _mxfdDefault_.</ins>
       </emu-alg>
@@ -166,12 +166,12 @@
         1. If _x_ &lt; 0 or _x_ is *-0*, let _isNegative_ be true; else let _isNegative_ be false.
         1. If _isNegative_, then
           1. Let _x_ be -_x_.
-        1. If _intlObject_.[[RoundingType]] is *"significantDigits"*, then
+        1. If _intlObject_.[[RoundingType]] is ~significantDigits~, then
           1. Let _result_ be ToRawPrecision(_x_, _intlObject_.[[MinimumSignificantDigits]], _intlObject_.[[MaximumSignificantDigits]]).
-        1. Else if _intlObject_.[[RoundingType]] is *"fractionDigits"*, then
+        1. Else if _intlObject_.[[RoundingType]] is ~fractionDigits~, then
           1. Let _result_ be ToRawFixed(_x_, _intlObject_.[[MinimumFractionDigits]], _intlObject_.[[MaximumFractionDigits]]).
         1. Else,
-          1. Assert: _intlObject_.[[RoundingType]] is *"compactRounding"*.
+          1. Assert: _intlObject_.[[RoundingType]] is ~compactRounding~.
           1. Let _result_ be ToRawPrecision(_x_, 1, 2).
           1. If _result_.[[IntegerDigitsCount]] &gt; 1, then
             1. Let _result_ be ToRawFixed(_x_, 0, 0).
@@ -1030,10 +1030,10 @@
       <li><ins class="block">[[Unit]] is a core unit identifier, as defined by Unicode Technical Standard #35, Part 2, Section 6. It is only used when [[Style]] has the value *"unit"*.</ins></li>
       <li><ins class="block">[[UnitDisplay]] is one of the String values *"short"*, *"narrow"*, or *"long"*, specifying whether to display the unit as a symbol, narrow symbol, or localized long name if formatting with the *"unit"* style. It is only used when [[Style]] has the value *"unit"*.</ins></li>
       <li>[[MinimumIntegerDigits]] is a non-negative integer Number value indicating the minimum integer digits to be used. Numbers will be padded with leading zeroes if necessary.</li>
-      <li>[[MinimumFractionDigits]] and [[MaximumFractionDigits]] are non-negative integer Number values indicating the minimum and maximum fraction digits to be used. Numbers will be rounded or padded with trailing zeroes if necessary. <ins>These properties are only used when [[RoundingType]] is *"fractionDigits"*.</ins></li>
-      <li>[[MinimumSignificantDigits]] and [[MaximumSignificantDigits]] are positive integer Number values indicating the minimum and maximum fraction digits to be shown. <del>Either none or both of these properties are present; if they are, they override minimum and maximum integer and fraction digits –</del> <ins>If present,</ins> the formatter uses however many <del>integer and</del> fraction digits are required to display the specified number of significant digits. <ins>These properties are only used when [[RoundingType]] is *"significantDigits"*.</ins></li>
+      <li>[[MinimumFractionDigits]] and [[MaximumFractionDigits]] are non-negative integer Number values indicating the minimum and maximum fraction digits to be used. Numbers will be rounded or padded with trailing zeroes if necessary. <ins>These properties are only used when [[RoundingType]] is ~fractionDigits~.</ins></li>
+      <li>[[MinimumSignificantDigits]] and [[MaximumSignificantDigits]] are positive integer Number values indicating the minimum and maximum fraction digits to be shown. <del>Either none or both of these properties are present; if they are, they override minimum and maximum integer and fraction digits –</del> <ins>If present,</ins> the formatter uses however many <del>integer and</del> fraction digits are required to display the specified number of significant digits. <ins>These properties are only used when [[RoundingType]] is ~significantDigits~.</ins></li>
       <li>[[UseGrouping]] is a Boolean value indicating whether a grouping separator should be used.</li>
-      <li><ins class="block">[[RoundingType]] is one of the String values *"fractionDigits"*, *"significantDigits"*, or *"compactRounding"*, indicating which rounding strategy to use. If *"fractionDigits"*, the number is rounded according to [[MinimumFractionDigits]] and [[MaximumFractionDigits]], as described above. If *"significantDigits"*, the number is rounded according to [[MinimumSignificantDigits]] and [[MaximumSignificantDigits]] as described above. If *"compactRounding"*, the number is rounded to 1 maximum fraction digit if there is 1 digit before the decimal separator, and otherwise round to 0 fraction digits.</ins></li>
+      <li><ins class="block">[[RoundingType]] is one of the String values ~fractionDigits~, ~significantDigits~, or ~compactRounding~, indicating which rounding strategy to use. If ~fractionDigits~, the number is rounded according to [[MinimumFractionDigits]] and [[MaximumFractionDigits]], as described above. If ~significantDigits~, the number is rounded according to [[MinimumSignificantDigits]] and [[MaximumSignificantDigits]] as described above. If ~compactRounding~, the number is rounded to 1 maximum fraction digit if there is 1 digit before the decimal separator, and otherwise round to 0 fraction digits.</ins></li>
       <li><ins class="block">[[Notation]]  is one of the String values *"standard"*, *"scientific"*, *"engineering"*, or *"compact"*, specifying whether the number should be displayed without scaling, scaled to the units place with the power of ten in scientific notation, scaled to the nearest thousand with the power of ten in scientific notation, or scaled to the nearest locale-dependent compact decimal notation power of ten with the corresponding compact decimal notation affix.</ins></li>
       <li><ins class="block">[[CompactDisplay]] is one of the String values *"short"* or *"long"*, specifying whether to display compact notation affixes in short form ("5K") or long form ("5 thousand") if formatting with the *"compact"* notation. It is only used when [[Notation]] has the value *"compact"*.</ins></li>
       <li><ins class="block">[[SignDisplay]] is one of the String values *"auto"*, *"always"*, *"never"*, or *"exceptZero"*, specifying whether to show the sign on negative numbers only, positive and negative numbers including zero, neither positive nor negative numbers, or positive and negative numbers but not zero.  In scientific notation, this slot affects the sign display of the mantissa but not the exponent.</ins></li>
