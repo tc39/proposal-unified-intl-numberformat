@@ -11,11 +11,15 @@ This proposal adds **measurement units**, **compact decimal notation**, and othe
 
 [Polyfill](https://www.npmjs.com/package/@formatjs/intl-unified-numberformat)
 
-## Status
+## ** Status **
 
 This proposal has been merged into ECMA-402 and is scheduled for the 2020 edition of the specification.
 
 https://github.com/tc39/ecma402/pull/404
+
+Please file any additional issues on the main ECMA-402 repository.
+
+https://github.com/tc39/ecma402/issues
 
 ## Background / Motivation
 
