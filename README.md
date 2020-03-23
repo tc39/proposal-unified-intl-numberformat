@@ -11,6 +11,12 @@ This proposal adds **measurement units**, **compact decimal notation**, and othe
 
 [Polyfill](https://www.npmjs.com/package/@formatjs/intl-unified-numberformat)
 
+## Status
+
+This proposal has been merged into ECMA-402 and is scheduled for the 2020 edition of the specification.
+
+https://github.com/tc39/ecma402/pull/404
+
 ## Background / Motivation
 
 There are many requests for adding number-formatting-related features to ECMA-402 (the JavaScript Intl standard library). These include:
